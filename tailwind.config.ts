@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,16 +53,23 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				}
+				// Custom theme colors
+				"theme-blue": {
+					100: "#CCDEFF",
+					200: "#99BDFF", 
+					300: "#668CFF",
+					400: "#335BFF",
+					500: "#001F54",
+					600: "#001A45",
+					700: "#001436",
+					800: "#000F27",
+					900: "#0A1128",
+				},
+				"theme-accent": {
+					300: "#64C9D9",
+					400: "#1282A2",
+					500: "#0E6980",
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -69,27 +77,42 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
-				'accordion-down': {
-					from: {
-						height: '0'
+				"accordion-down": {
+					from: { height: "0" },
+					to: { height: "var(--radix-accordion-content-height)" },
+				},
+				"accordion-up": {
+					from: { height: "var(--radix-accordion-content-height)" },
+					to: { height: "0" },
+				},
+				"fade-in": {
+					"0%": {
+						opacity: "0",
+						transform: "translateY(10px)"
 					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
+					"100%": {
+						opacity: "1",
+						transform: "translateY(0)"
 					}
 				},
-				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
+				"pulse-light": {
+					"0%, 100%": {
+						opacity: "1"
 					},
-					to: {
-						height: '0'
+					"50%": {
+						opacity: "0.7"
 					}
-				}
+				},
 			},
 			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				"accordion-down": "accordion-down 0.2s ease-out",
+				"accordion-up": "accordion-up 0.2s ease-out",
+				"fade-in": "fade-in 0.5s ease-out forwards",
+				"pulse-light": "pulse-light 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+			},
+			fontFamily: {
+				sans: ["Nunito Sans", "sans-serif"],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

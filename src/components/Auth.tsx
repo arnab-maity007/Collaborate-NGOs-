@@ -1,0 +1,203 @@
+
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/components/ui/use-toast";
+import { LogIn, UserPlus, Fingerprint, Mail } from "lucide-react";
+
+const Auth = () => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [useDigilocker, setUseDigilocker] = useState(false);
+
+  const handleAuthentication = (type: "login" | "register") => {
+    setIsLoading(true);
+    
+    // Simulate authentication process
+    setTimeout(() => {
+      setIsLoading(false);
+      
+      // Success message
+      toast({
+        title: type === "login" ? "Login Successful" : "Registration Successful",
+        description: useDigilocker 
+          ? "Your DigiLocker identity has been verified." 
+          : type === "login" 
+            ? "You are now logged in to DonorChain." 
+            : "Your account has been created successfully.",
+      });
+    }, 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <Card className="glass-card w-full max-w-md">
+        <Tabs defaultValue="login" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="register">Register</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="login" className="p-6 space-y-4">
+            <div className="text-center mb-6">
+              <LogIn className="h-10 w-10 mx-auto text-theme-accent-300 mb-2" />
+              <h2 className="text-xl font-bold text-gradient">Login to Your Account</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login-email">Email</Label>
+                <Input id="login-email" type="email" placeholder="Enter your email" />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="login-password">Password</Label>
+                <Input id="login-password" type="password" placeholder="Enter your password" />
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox id="login-digilocker" checked={useDigilocker} onCheckedChange={(checked) => setUseDigilocker(!!checked)} />
+                <Label 
+                  htmlFor="login-digilocker" 
+                  className="text-sm flex items-center cursor-pointer"
+                >
+                  Use DigiLocker / Aadhaar for verification
+                  <Fingerprint className="h-4 w-4 ml-1 text-theme-accent-300" />
+                </Label>
+              </div>
+              
+              <Button
+                className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
+                disabled={isLoading}
+                onClick={() => handleAuthentication("login")}
+              >
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    Logging in...
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Login
+                  </div>
+                )}
+              </Button>
+              
+              <div className="text-center">
+                <a href="#" className="text-sm text-theme-accent-300 hover:underline">
+                  Forgot password?
+                </a>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="register" className="p-6 space-y-4">
+            <div className="text-center mb-6">
+              <UserPlus className="h-10 w-10 mx-auto text-theme-accent-300 mb-2" />
+              <h2 className="text-xl font-bold text-gradient">Create an Account</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="register-name">Full Name</Label>
+                <Input id="register-name" type="text" placeholder="Enter your full name" />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="register-email">Email</Label>
+                <Input id="register-email" type="email" placeholder="Enter your email" />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="register-password">Password</Label>
+                <Input id="register-password" type="password" placeholder="Create a password" />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="register-confirm-password">Confirm Password</Label>
+                <Input id="register-confirm-password" type="password" placeholder="Confirm your password" />
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox id="register-digilocker" checked={useDigilocker} onCheckedChange={(checked) => setUseDigilocker(!!checked)} />
+                <Label 
+                  htmlFor="register-digilocker" 
+                  className="text-sm flex items-center cursor-pointer"
+                >
+                  Verify identity with DigiLocker / Aadhaar
+                  <Fingerprint className="h-4 w-4 ml-1 text-theme-accent-300" />
+                </Label>
+              </div>
+              
+              {useDigilocker && (
+                <div className="py-3 px-4 neo-blur space-y-3">
+                  <div className="flex items-center">
+                    <Fingerprint className="h-5 w-5 mr-2 text-theme-accent-300" />
+                    <p className="text-sm text-white font-medium">DigiLocker / Aadhaar Verification</p>
+                  </div>
+                  <p className="text-xs text-gray-300">
+                    Secure identity verification using government-approved digital locker. 
+                    This helps us comply with KYC requirements.
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300"
+                    >
+                      <Fingerprint className="h-3 w-3 mr-1" />
+                      Connect DigiLocker
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300"
+                    >
+                      <Mail className="h-3 w-3 mr-1" />
+                      Verify with OTP
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox id="register-terms" />
+                <Label 
+                  htmlFor="register-terms" 
+                  className="text-sm"
+                >
+                  I agree to the <a href="#" className="text-theme-accent-300 hover:underline">Terms of Service</a> and <a href="#" className="text-theme-accent-300 hover:underline">Privacy Policy</a>
+                </Label>
+              </div>
+              
+              <Button
+                className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
+                disabled={isLoading}
+                onClick={() => handleAuthentication("register")}
+              >
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    Creating account...
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Create Account
+                  </div>
+                )}
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </Card>
+    </div>
+  );
+};
+
+export default Auth;
