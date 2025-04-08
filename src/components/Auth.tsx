@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { LogIn, UserPlus, Fingerprint, Mail, X, Google } from "lucide-react";
+import { LogIn, UserPlus, Fingerprint, Mail, X, Globe } from "lucide-react";
 
 interface AuthProps {
   onClose?: () => void;
@@ -103,7 +102,7 @@ const Auth = ({ onClose }: AuthProps) => {
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
               >
-                <Google className="mr-2 h-4 w-4 text-red-500" />
+                <Globe className="mr-2 h-4 w-4 text-blue-500" />
                 Continue with Google
               </Button>
               
@@ -195,7 +194,7 @@ const Auth = ({ onClose }: AuthProps) => {
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
               >
-                <Google className="mr-2 h-4 w-4 text-red-500" />
+                <Globe className="mr-2 h-4 w-4 text-blue-500" />
                 Sign up with Google
               </Button>
               

@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu, X, LogIn, Wallet, Gift } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import Auth from "@/components/Auth";
 
 const Navbar = () => {
   const { toast } = useToast();
