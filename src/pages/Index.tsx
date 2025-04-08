@@ -3,9 +3,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import About from "@/components/About";
-import DonationFlow from "@/components/DonationFlow";
 import Footer from "@/components/Footer";
-// import Auth from "@/components/Auth"; // Uncomment when implementing authentication modal
 
 const Index = () => {
   return (
@@ -15,8 +13,6 @@ const Index = () => {
         <Hero />
         <Stats />
         <About />
-        <DonationFlow />
-        {/* <Auth /> */} {/* Uncomment when implementing authentication modal */}
       </main>
       <Footer />
     </div>

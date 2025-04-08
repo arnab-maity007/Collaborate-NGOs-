@@ -8,6 +8,8 @@ import { Web3Provider } from "@/contexts/Web3Context";
 import Index from "./pages/Index";
 import AboutPage from "./pages/AboutPage";
 import TrackerPage from "./pages/TrackerPage";
+import NGOListPage from "./pages/NGOListPage";
+import DonatePage from "./pages/DonatePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/tracker" element={<TrackerPage />} />
+            <Route path="/ngo-list" element={<NGOListPage />} />
+            <Route path="/donate" element={<DonatePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

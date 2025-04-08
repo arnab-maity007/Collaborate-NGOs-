@@ -7,9 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { LogIn, UserPlus, Fingerprint, Mail } from "lucide-react";
+import { LogIn, UserPlus, Fingerprint, Mail, X, Google } from "lucide-react";
 
-const Auth = () => {
+interface AuthProps {
+  onClose?: () => void;
+}
+
+const Auth = ({ onClose }: AuthProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [useDigilocker, setUseDigilocker] = useState(false);
@@ -27,15 +31,59 @@ const Auth = () => {
         description: useDigilocker 
           ? "Your DigiLocker identity has been verified." 
           : type === "login" 
-            ? "You are now logged in to DonorChain." 
+            ? "You are now logged in to Donata." 
             : "Your account has been created successfully.",
+      });
+      
+      if (onClose) {
+        onClose();
+      }
+    }, 2000);
+  };
+
+  const handleGoogleAuth = () => {
+    setIsLoading(true);
+    
+    // Simulate Google authentication
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Google Authentication Successful",
+        description: "You are now logged in using your Google account.",
+      });
+      
+      if (onClose) {
+        onClose();
+      }
+    }, 1500);
+  };
+
+  const handleDigiLockerAuth = () => {
+    setIsLoading(true);
+    
+    // Simulate DigiLocker authentication
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "DigiLocker Verification Successful",
+        description: "Your identity has been verified using DigiLocker.",
       });
     }, 2000);
   };
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="glass-card w-full max-w-md">
+      <Card className="glass-card w-full max-w-md relative">
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="absolute right-4 top-4 text-gray-400 hover:text-white"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
+        
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Login</TabsTrigger>
@@ -49,6 +97,22 @@ const Auth = () => {
             </div>
             
             <div className="space-y-4">
+              <Button 
+                variant="outline" 
+                className="w-full border-white/20 flex items-center justify-center"
+                onClick={handleGoogleAuth}
+                disabled={isLoading}
+              >
+                <Google className="mr-2 h-4 w-4 text-red-500" />
+                Continue with Google
+              </Button>
+              
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink mx-3 text-white/50 text-sm">or</span>
+                <div className="flex-grow border-t border-white/10"></div>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="login-email">Email</Label>
                 <Input id="login-email" type="email" placeholder="Enter your email" />
@@ -69,6 +133,28 @@ const Auth = () => {
                   <Fingerprint className="h-4 w-4 ml-1 text-theme-accent-300" />
                 </Label>
               </div>
+              
+              {useDigilocker && (
+                <div className="py-3 px-4 neo-blur space-y-3">
+                  <div className="flex items-center">
+                    <Fingerprint className="h-5 w-5 mr-2 text-theme-accent-300" />
+                    <p className="text-sm text-white font-medium">DigiLocker / Aadhaar Verification</p>
+                  </div>
+                  <p className="text-xs text-gray-300">
+                    Secure identity verification using government-approved digital locker. 
+                    This helps us comply with KYC requirements.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-xs border-theme-accent-400 text-theme-accent-300"
+                    onClick={handleDigiLockerAuth}
+                  >
+                    <Fingerprint className="h-3 w-3 mr-1" />
+                    Verify with DigiLocker
+                  </Button>
+                </div>
+              )}
               
               <Button
                 className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
@@ -103,6 +189,22 @@ const Auth = () => {
             </div>
             
             <div className="space-y-4">
+              <Button 
+                variant="outline" 
+                className="w-full border-white/20 flex items-center justify-center"
+                onClick={handleGoogleAuth}
+                disabled={isLoading}
+              >
+                <Google className="mr-2 h-4 w-4 text-red-500" />
+                Sign up with Google
+              </Button>
+              
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink mx-3 text-white/50 text-sm">or</span>
+                <div className="flex-grow border-t border-white/10"></div>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="register-name">Full Name</Label>
                 <Input id="register-name" type="text" placeholder="Enter your full name" />
@@ -149,6 +251,7 @@ const Auth = () => {
                       variant="outline" 
                       size="sm" 
                       className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300"
+                      onClick={handleDigiLockerAuth}
                     >
                       <Fingerprint className="h-3 w-3 mr-1" />
                       Connect DigiLocker

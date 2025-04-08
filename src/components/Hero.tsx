@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Quote {
   text: string;
@@ -32,6 +33,7 @@ const quotes: Quote[] = [
 ];
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [currentQuote, setCurrentQuote] = useState<Quote>(quotes[0]);
   
   useEffect(() => {
@@ -52,9 +54,11 @@ const Hero = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-theme-blue-900 to-theme-blue-700 py-20 px-4 sm:px-6 lg:px-8">
-      {/* Background pattern */}
+      {/* Background image */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAwIDEwMGM1MC41MDggMCA5MS45MTItNDEuNDAzIDkxLjkxMi05MS45MTIgMC0xLjAxMy0uMDE3LTIuMDIxLS4wNS0zLjAyNEMxOTMuNDM3IDE0LjY3MyAxOTMuODYgMjQuMzI0IDE5My44OSAzNC4wMWMuMTIxIDQwLjU2My0zMi41MTIgNzMuNjI0LTczLjA3IDczLjYyNC00MC41NTkgMC03My4xOS0zMy4wNjItNzMuMDctNzMuNjI0LjAzLTkuNjg2LjQ1My0xOS4zMzcgMi4wMjctMjguOTQ1LS4wMzMgMS4wMDMtLjA1IDIuMDExLS4wNSAzLjAyNEMxMC4yIDU4LjkxMiA1MS42MDMgMTEwIDEwMCAxMTB6IiBmaWxsPSIjMDAxRjU0IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=')] opacity-10"></div>
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-15" 
+             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070')" }}></div>
+        <div className="absolute inset-0 bg-theme-blue-900/60"></div>
       </div>
       
       <div className="relative z-10 text-center">
@@ -73,7 +77,7 @@ const Hero = () => {
           <Button 
             size="lg" 
             className="bg-theme-accent-400 hover:bg-theme-accent-500 text-lg px-8"
-            onClick={() => scrollToSection("donate")}
+            onClick={() => navigate('/donate')}
           >
             Donate Now
           </Button>

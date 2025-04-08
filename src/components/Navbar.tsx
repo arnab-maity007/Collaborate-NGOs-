@@ -2,11 +2,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X, LogIn, Wallet } from "lucide-react";
+import { Menu, X, LogIn, Wallet, Gift } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const Navbar = () => {
+  const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -15,7 +18,14 @@ const Navbar = () => {
   const connectWallet = () => {
     // This would have the actual web3 wallet connection logic
     setIsConnected(true);
-    console.log("Connecting wallet...");
+    toast({
+      title: "Wallet connected",
+      description: "Your wallet has been connected successfully",
+    });
+  };
+
+  const toggleAuthModal = () => {
+    setShowAuthModal(!showAuthModal);
   };
 
   return (
@@ -25,9 +35,9 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <div className="w-10 h-10 rounded-full bg-theme-accent-400 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">D</span>
+                <Gift className="h-5 w-5 text-white" />
               </div>
-              <span className="ml-2 text-xl font-bold text-white">DonorChain</span>
+              <span className="ml-2 text-xl font-bold text-white">Donata</span>
             </Link>
           </div>
           
@@ -37,6 +47,9 @@ const Navbar = () => {
             </Link>
             <Link to="/about" className="text-gray-300 hover:text-white px-3 py-2">
               About
+            </Link>
+            <Link to="/ngo-list" className="text-gray-300 hover:text-white px-3 py-2">
+              Our NGOs
             </Link>
             <Link to="/tracker" className="text-gray-300 hover:text-white px-3 py-2">
               Track Donations
@@ -58,7 +71,11 @@ const Navbar = () => {
                 </div>
               )}
             </Button>
-            <Button variant="default" className="bg-theme-accent-400 hover:bg-theme-accent-500">
+            <Button 
+              variant="default" 
+              className="bg-theme-accent-400 hover:bg-theme-accent-500"
+              onClick={toggleAuthModal}
+            >
               <LogIn className="mr-2 h-4 w-4" />
               <span>Sign Up / Login</span>
             </Button>
@@ -97,6 +114,13 @@ const Navbar = () => {
               About
             </Link>
             <Link
+              to="/ngo-list"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Our NGOs
+            </Link>
+            <Link
               to="/tracker"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white"
               onClick={() => setIsMenuOpen(false)}
@@ -113,9 +137,22 @@ const Navbar = () => {
             <Button 
               variant="default" 
               className="w-full mt-2 bg-theme-accent-400 hover:bg-theme-accent-500"
+              onClick={() => {
+                toggleAuthModal();
+                setIsMenuOpen(false);
+              }}
             >
               Sign Up / Login
             </Button>
+          </div>
+        </div>
+      )}
+      
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50" onClick={toggleAuthModal}>
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="relative h-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
+            <Auth onClose={toggleAuthModal} />
           </div>
         </div>
       )}
