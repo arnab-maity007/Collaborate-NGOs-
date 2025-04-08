@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -57,10 +56,10 @@ const Stats = () => {
         <h2 className="text-3xl font-bold text-center mb-12 text-gradient">Our Impact</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCounter title="NGOs Connected" value={158} suffix="+" />
-          <StatCounter title="Donations Made" value={43250} />
-          <StatCounter title="Amount Raised" value={5420000} prefix="₹" fixed={2} />
-          <StatCounter title="Active Donors" value={18700} suffix="+" />
+          <StatCounter title="NGOs Connected" value={20} suffix="+" />
+          <StatCounter title="Donations Made" value={1000} suffix="+" />
+          <StatCounter title="Amount Raised" value={1000000} prefix="₹" fixed={0} suffix="+" />
+          <StatCounter title="Active Donors" value={100} suffix="+" />
         </div>
         
         <div className="mt-12 text-center">

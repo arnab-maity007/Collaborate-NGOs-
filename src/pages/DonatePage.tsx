@@ -12,16 +12,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { 
-  Users, Heart, Baby, Shield, Lightbulb, Utensils, Banknote, 
-  Package, ChevronRight, ChevronLeft, Send, Calendar, MapPin 
+  Users, Heart, Shield, Lightbulb, Utensils, Banknote, Book,
+  Package, ChevronRight, ChevronLeft, Send, Calendar, MapPin,
+  Shirt, MessageSquare, Leaf, Brain, Home, Dog, Cat
 } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-type DonationCategory = "human" | "animals" | "children" | "army" | "research";
-type HumanSubcategory = "men" | "women" | "family" | "all";
-type DonationType = "money" | "food" | "other";
+type DonationCategory = "people" | "animals" | "army" | "research" | "rural" | "forestation" | "mental";
+type AnimalSubcategory = "dogs" | "cats" | "wildlife" | "birds" | "marine" | "all";
+type DonationType = "money" | "food" | "clothes" | "books" | "teaching" | "other";
+type DonationMode = "online" | "offline";
 
 const DonatePage = () => {
   const { toast } = useToast();
@@ -39,28 +41,39 @@ const DonatePage = () => {
   // Donation information
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState<DonationCategory | null>(null);
-  const [humanSubcategory, setHumanSubcategory] = useState<HumanSubcategory | null>(null);
+  const [animalSubcategory, setAnimalSubcategory] = useState<AnimalSubcategory | null>(null);
   const [donationType, setDonationType] = useState<DonationType | null>(null);
+  const [donationMode, setDonationMode] = useState<DonationMode | null>(null);
   const [amount, setAmount] = useState<string>("");
   const [otherDetails, setOtherDetails] = useState<string>("");
   const [processingDonation, setProcessingDonation] = useState(false);
 
   const handleCategorySelect = (selected: DonationCategory) => {
     setCategory(selected);
-    if (selected !== "human") {
-      setHumanSubcategory(null);
+    if (selected !== "animals") {
+      setAnimalSubcategory(null);
     }
-    setStep(selected === "human" ? 3 : 4);
+    setStep(selected === "animals" ? 3 : 4);
   };
 
-  const handleHumanSubcategorySelect = (selected: HumanSubcategory) => {
-    setHumanSubcategory(selected);
+  const handleAnimalSubcategorySelect = (selected: AnimalSubcategory) => {
+    setAnimalSubcategory(selected);
     setStep(4);
   };
 
   const handleDonationTypeSelect = (selected: DonationType) => {
     setDonationType(selected);
-    setStep(5);
+    if (selected === "money") {
+      setDonationMode("online");
+      setStep(6);
+    } else {
+      setStep(5);
+    }
+  };
+
+  const handleDonationModeSelect = (selected: DonationMode) => {
+    setDonationMode(selected);
+    setStep(6);
   };
 
   const handleSubmitDonation = () => {
@@ -73,7 +86,7 @@ const DonatePage = () => {
       return;
     }
 
-    if (!category || !donationType || (category === "human" && !humanSubcategory)) {
+    if (!category || !donationType || (category === "animals" && !animalSubcategory)) {
       toast({
         title: "Missing donation information",
         description: "Please complete all required donation fields",
@@ -102,8 +115,9 @@ const DonatePage = () => {
       
       // Reset form
       setCategory(null);
-      setHumanSubcategory(null);
+      setAnimalSubcategory(null);
       setDonationType(null);
+      setDonationMode(null);
       setAmount("");
       setOtherDetails("");
       setStep(1);
@@ -137,12 +151,13 @@ const DonatePage = () => {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor="phone">Phone Number*</Label>
           <Input 
             id="phone" 
             value={phone} 
             onChange={(e) => setPhone(e.target.value)} 
             placeholder="Enter your phone number"
+            required
           />
         </div>
         <div className="space-y-2">
@@ -168,25 +183,27 @@ const DonatePage = () => {
           </Popover>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="address">Address</Label>
+          <Label htmlFor="address">Address*</Label>
           <Input 
             id="address" 
             value={address} 
             onChange={(e) => setAddress(e.target.value)} 
             placeholder="Enter your street address"
+            required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
+          <Label htmlFor="city">City*</Label>
           <Input 
             id="city" 
             value={city} 
             onChange={(e) => setCity(e.target.value)} 
             placeholder="Enter your city"
+            required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="state">State</Label>
+          <Label htmlFor="state">State*</Label>
           <Select value={state} onValueChange={setState}>
             <SelectTrigger>
               <SelectValue placeholder="Select your state" />
@@ -205,12 +222,13 @@ const DonatePage = () => {
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="pincode">PIN Code</Label>
+          <Label htmlFor="pincode">PIN Code*</Label>
           <Input 
             id="pincode" 
             value={pincode} 
             onChange={(e) => setPincode(e.target.value)} 
             placeholder="Enter your PIN code"
+            required
           />
         </div>
       </div>
@@ -220,24 +238,18 @@ const DonatePage = () => {
   const renderCategorySelection = () => (
     <div className="space-y-6">
       <h3 className="text-xl font-semibold text-gradient">Who would you like to help?</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <CategoryCard 
           icon={<Users />} 
-          label="Humans" 
-          onClick={() => handleCategorySelect("human")} 
-          selected={category === "human"}
+          label="Needy People" 
+          onClick={() => handleCategorySelect("people")} 
+          selected={category === "people"}
         />
         <CategoryCard 
           icon={<Heart />} 
           label="Animals" 
           onClick={() => handleCategorySelect("animals")} 
           selected={category === "animals"}
-        />
-        <CategoryCard 
-          icon={<Baby />} 
-          label="Children" 
-          onClick={() => handleCategorySelect("children")} 
-          selected={category === "children"}
         />
         <CategoryCard 
           icon={<Shield />} 
@@ -251,37 +263,67 @@ const DonatePage = () => {
           onClick={() => handleCategorySelect("research")} 
           selected={category === "research"}
         />
+        <CategoryCard 
+          icon={<Home />} 
+          label="Rural Development" 
+          onClick={() => handleCategorySelect("rural")} 
+          selected={category === "rural"}
+        />
+        <CategoryCard 
+          icon={<Leaf />} 
+          label="Forestation" 
+          onClick={() => handleCategorySelect("forestation")} 
+          selected={category === "forestation"}
+        />
+        <CategoryCard 
+          icon={<Brain />} 
+          label="Mental Health" 
+          onClick={() => handleCategorySelect("mental")} 
+          selected={category === "mental"}
+        />
       </div>
     </div>
   );
 
-  const renderHumanSubcategorySelection = () => (
+  const renderAnimalSubcategorySelection = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-gradient">Which humans would you like to help?</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <h3 className="text-xl font-semibold text-gradient">Which animals would you like to help?</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
-          label="Men" 
-          onClick={() => handleHumanSubcategorySelect("men")} 
-          selected={humanSubcategory === "men"}
+          icon={<Dog className="h-5 w-5" />} 
+          label="Dogs" 
+          onClick={() => handleAnimalSubcategorySelect("dogs")} 
+          selected={animalSubcategory === "dogs"}
         />
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
-          label="Women" 
-          onClick={() => handleHumanSubcategorySelect("women")} 
-          selected={humanSubcategory === "women"}
+          icon={<Cat className="h-5 w-5" />} 
+          label="Cats" 
+          onClick={() => handleAnimalSubcategorySelect("cats")} 
+          selected={animalSubcategory === "cats"}
         />
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
-          label="Families" 
-          onClick={() => handleHumanSubcategorySelect("family")} 
-          selected={humanSubcategory === "family"}
+          icon={<Heart className="h-5 w-5" />} 
+          label="Wildlife" 
+          onClick={() => handleAnimalSubcategorySelect("wildlife")} 
+          selected={animalSubcategory === "wildlife"}
         />
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
-          label="All" 
-          onClick={() => handleHumanSubcategorySelect("all")} 
-          selected={humanSubcategory === "all"}
+          icon={<Heart className="h-5 w-5" />} 
+          label="Birds" 
+          onClick={() => handleAnimalSubcategorySelect("birds")} 
+          selected={animalSubcategory === "birds"}
+        />
+        <CategoryCard 
+          icon={<Heart className="h-5 w-5" />} 
+          label="Marine Life" 
+          onClick={() => handleAnimalSubcategorySelect("marine")} 
+          selected={animalSubcategory === "marine"}
+        />
+        <CategoryCard 
+          icon={<Heart className="h-5 w-5" />} 
+          label="All Animals" 
+          onClick={() => handleAnimalSubcategorySelect("all")} 
+          selected={animalSubcategory === "all"}
         />
       </div>
     </div>
@@ -289,8 +331,8 @@ const DonatePage = () => {
 
   const renderDonationTypeSelection = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-gradient">What would you like to donate?</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <h3 className="text-xl font-semibold text-gradient">How would you like to help?</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <CategoryCard 
           icon={<Banknote />} 
           label="Money" 
@@ -304,10 +346,50 @@ const DonatePage = () => {
           selected={donationType === "food"}
         />
         <CategoryCard 
+          icon={<Shirt />} 
+          label="Clothes" 
+          onClick={() => handleDonationTypeSelect("clothes")} 
+          selected={donationType === "clothes"}
+        />
+        <CategoryCard 
+          icon={<Book />} 
+          label="Books" 
+          onClick={() => handleDonationTypeSelect("books")} 
+          selected={donationType === "books"}
+        />
+        <CategoryCard 
+          icon={<MessageSquare />} 
+          label="Teaching" 
+          onClick={() => handleDonationTypeSelect("teaching")} 
+          selected={donationType === "teaching"}
+        />
+        <CategoryCard 
           icon={<Package />} 
           label="Other" 
           onClick={() => handleDonationTypeSelect("other")} 
           selected={donationType === "other"}
+        />
+      </div>
+    </div>
+  );
+
+  const renderDonationModeSelection = () => (
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold text-gradient">How would you like to donate?</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <CategoryCard 
+          icon={<MapPin className="h-6 w-6" />} 
+          label="Offline" 
+          description="Visit an NGO in person to donate"
+          onClick={() => handleDonationModeSelect("offline")} 
+          selected={donationMode === "offline"}
+        />
+        <CategoryCard 
+          icon={<Send className="h-6 w-6" />} 
+          label="Online" 
+          description="Donate directly through our platform"
+          onClick={() => handleDonationModeSelect("online")} 
+          selected={donationMode === "online"}
         />
       </div>
     </div>
@@ -336,33 +418,34 @@ const DonatePage = () => {
         </div>
       )}
       
-      {donationType === "food" && (
+      {donationType !== "money" && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="foodDetails">Food Details</Label>
+            <Label htmlFor="donationDetails">
+              {donationMode === "offline" ? "Your donation details (what you'd like to donate)" : "Details for online donation"}
+            </Label>
             <Textarea
-              id="foodDetails"
+              id="donationDetails"
               value={otherDetails}
               onChange={(e) => setOtherDetails(e.target.value)}
-              placeholder="Please describe what food items you'd like to donate"
+              placeholder={donationMode === "offline" 
+                ? `Please describe what ${donationType} items you'd like to donate and any relevant details`
+                : `Please provide details about your ${donationType} donation`
+              }
               className="min-h-[100px]"
             />
           </div>
         </div>
       )}
       
-      {donationType === "other" && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="otherDetails">Details</Label>
-            <Textarea
-              id="otherDetails"
-              value={otherDetails}
-              onChange={(e) => setOtherDetails(e.target.value)}
-              placeholder="Please describe what you'd like to donate"
-              className="min-h-[100px]"
-            />
-          </div>
+      {donationMode === "offline" && (
+        <div className="p-4 glass-card mt-4">
+          <h4 className="text-theme-accent-300 font-semibold mb-2">What happens next?</h4>
+          <p className="text-sm text-gray-300">
+            After submitting your details, one of our partner NGOs will contact you soon to arrange 
+            the collection or drop-off of your donation. You'll receive an email confirmation with 
+            contact details.
+          </p>
         </div>
       )}
       
@@ -371,11 +454,21 @@ const DonatePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <p className="text-gray-300">Name: <span className="text-white">{name}</span></p>
           <p className="text-gray-300">Email: <span className="text-white">{email}</span></p>
-          <p className="text-gray-300">Category: <span className="text-white">{category} {category === "human" ? `(${humanSubcategory})` : ""}</span></p>
+          <p className="text-gray-300">Phone: <span className="text-white">{phone}</span></p>
+          <p className="text-gray-300">Location: <span className="text-white">{city}, {state}</span></p>
+          <p className="text-gray-300">
+            Category: <span className="text-white">
+              {category === "people" ? "Needy People" : 
+               category === "animals" ? `Animals (${animalSubcategory})` : 
+               category === "rural" ? "Rural Development" : 
+               category === "forestation" ? "Forestation" : 
+               category === "mental" ? "Mental Health" : 
+               category}
+            </span>
+          </p>
           <p className="text-gray-300">Donation Type: <span className="text-white">{donationType}</span></p>
+          <p className="text-gray-300">Donation Mode: <span className="text-white">{donationMode}</span></p>
           {donationType === "money" && amount && <p className="text-gray-300">Amount: <span className="text-white">₹{amount}</span></p>}
-          {date && <p className="text-gray-300">Date of Birth: <span className="text-white">{format(date, "PPP")}</span></p>}
-          {city && state && <p className="text-gray-300">Location: <span className="text-white">{city}, {state}</span></p>}
         </div>
         {otherDetails && (
           <div className="mt-2">
@@ -405,6 +498,18 @@ const DonatePage = () => {
     </div>
   );
 
+  const getStepTitle = (stepNumber: number): string => {
+    switch(stepNumber) {
+      case 1: return "Personal Info";
+      case 2: return "Category";
+      case 3: return category === "animals" ? "Animal Type" : "Subcategory";
+      case 4: return "Donation Type";
+      case 5: return "Donation Mode";
+      case 6: return "Details";
+      default: return "";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-theme-blue-900 flex flex-col">
       <Navbar />
@@ -425,10 +530,10 @@ const DonatePage = () => {
             <Card className="glass-card p-6 md:p-8">
               <div className="mb-8">
                 <div className="flex justify-between items-center">
-                  {[1, 2, 3, 4, 5].map((i) => (
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div 
                       key={i}
-                      className={`flex flex-col items-center ${i < 5 ? "flex-1" : ""}`}
+                      className={`flex flex-col items-center ${i < 6 ? "flex-1" : ""}`}
                     >
                       <div 
                         className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 
@@ -436,7 +541,7 @@ const DonatePage = () => {
                       >
                         {i}
                       </div>
-                      {i < 5 && (
+                      {i < 6 && (
                         <div 
                           className={`h-1 w-full ${step > i ? "bg-theme-accent-400" : "bg-gray-700"}`} 
                           aria-hidden="true"
@@ -446,20 +551,22 @@ const DonatePage = () => {
                   ))}
                 </div>
                 <div className="flex justify-between mt-2 text-xs text-gray-400">
-                  <span>Personal Info</span>
-                  <span>Category</span>
-                  <span>{category === "human" ? "Subcategory" : "Type"}</span>
-                  <span>{category === "human" ? "Type" : "Details"}</span>
-                  <span>{category === "human" ? "Details" : ""}</span>
+                  <span>{getStepTitle(1)}</span>
+                  <span>{getStepTitle(2)}</span>
+                  <span>{getStepTitle(3)}</span>
+                  <span>{getStepTitle(4)}</span>
+                  <span>{getStepTitle(5)}</span>
+                  <span>{getStepTitle(6)}</span>
                 </div>
               </div>
               
               <div className="min-h-[400px]">
                 {step === 1 && renderPersonalInformation()}
                 {step === 2 && renderCategorySelection()}
-                {step === 3 && renderHumanSubcategorySelection()}
+                {step === 3 && renderAnimalSubcategorySelection()}
                 {step === 4 && renderDonationTypeSelection()}
-                {step === 5 && renderDonationDetails()}
+                {step === 5 && renderDonationModeSelection()}
+                {step === 6 && renderDonationDetails()}
               </div>
               
               <div className="mt-6 flex justify-between">
@@ -473,11 +580,11 @@ const DonatePage = () => {
                   Back
                 </Button>
                 
-                {step < 5 && (
+                {step < 6 && (
                   <Button
                     onClick={() => {
                       if (step === 1) {
-                        if (!name || !email || !date) {
+                        if (!name || !email || !phone || !date || !address || !city || !state || !pincode) {
                           toast({
                             title: "Required fields missing",
                             description: "Please fill in all required fields marked with *",
@@ -488,8 +595,9 @@ const DonatePage = () => {
                         setStep(2);
                       } else if (
                         (step === 2 && category) ||
-                        (step === 3 && humanSubcategory) ||
-                        (step === 4 && donationType)
+                        (step === 3 && animalSubcategory) ||
+                        (step === 4 && donationType) ||
+                        (step === 5 && donationMode)
                       ) {
                         setStep(step + 1);
                       } else {
@@ -519,24 +627,29 @@ const DonatePage = () => {
 const CategoryCard = ({ 
   icon, 
   label, 
+  description,
   onClick, 
   selected 
 }: { 
   icon: React.ReactNode; 
   label: string; 
+  description?: string;
   onClick: () => void; 
   selected: boolean;
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`glass-card p-4 flex flex-col items-center justify-center space-y-3 transition-all h-28
+      className={`glass-card p-4 flex flex-col items-center justify-center space-y-3 transition-all ${description ? "h-auto py-6" : "h-28"}
         ${selected ? "bg-theme-accent-400/20 border-theme-accent-400" : "hover:bg-white/5"}`}
     >
       <div className={`${selected ? "text-theme-accent-300" : "text-gray-300"}`}>
         {icon}
       </div>
       <span className={`font-medium ${selected ? "text-white" : "text-gray-300"}`}>{label}</span>
+      {description && (
+        <p className="text-xs text-gray-400 text-center mt-1">{description}</p>
+      )}
     </button>
   );
 };
