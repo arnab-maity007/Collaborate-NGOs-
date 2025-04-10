@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to a collaborative platform for NGOs
 
 ## Project info
 
