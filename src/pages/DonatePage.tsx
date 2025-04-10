@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { submitDonation } from "@/services/donationService";
+import { submitDonation, getNGOs } from "@/services/donationService";
 import { 
   Users, Heart, Shield, Lightbulb, Utensils, Banknote, Book,
   Package, ChevronRight, ChevronLeft, Send, Calendar, MapPin,
@@ -21,6 +21,7 @@ import {
 import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { NGO } from "@/types/supabase";
 
 type DonationCategory = "people" | "animals" | "army" | "research" | "rural" | "forestation" | "mental";
 type AnimalSubcategory = "dogs" | "cats" | "wildlife" | "birds" | "marine" | "all";
@@ -42,6 +43,10 @@ const DonatePage = () => {
   const [pincode, setPincode] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   
+  // NGOs
+  const [ngos, setNgos] = useState<NGO[]>([]);
+  const [selectedNgo, setSelectedNgo] = useState<string | null>(null);
+  
   // Donation information
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState<DonationCategory | null>(null);
@@ -57,6 +62,19 @@ const DonatePage = () => {
     if (user) {
       setEmail(user.email || "");
     }
+    
+    // Fetch NGOs
+    const fetchNGOs = async () => {
+      const ngoData = await getNGOs();
+      setNgos(ngoData);
+      
+      // Set first NGO as default if available
+      if (ngoData.length > 0) {
+        setSelectedNgo(ngoData[0].id);
+      }
+    };
+    
+    fetchNGOs();
   }, [user]);
 
   const handleCategorySelect = (selected: DonationCategory) => {
@@ -108,7 +126,7 @@ const DonatePage = () => {
       return;
     }
 
-    if (!category || !donationType || (category === "animals" && !animalSubcategory)) {
+    if (!category || !donationType || (category === "animals" && !animalSubcategory) || !selectedNgo) {
       toast({
         title: "Missing donation information",
         description: "Please complete all required donation fields",
@@ -137,6 +155,7 @@ const DonatePage = () => {
       amount: donationType === "money" ? parseFloat(amount) : null,
       other_details: otherDetails || null,
       delivery_address: donationMode === "offline" ? `${address}, ${city}, ${state}, ${pincode}` : null,
+      ngo_id: selectedNgo
     };
 
     // Submit to Supabase
@@ -452,11 +471,39 @@ const DonatePage = () => {
               />
             </div>
           </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="ngo">Select NGO to donate to</Label>
+            <Select value={selectedNgo || ""} onValueChange={setSelectedNgo}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an NGO" />
+              </SelectTrigger>
+              <SelectContent>
+                {ngos.map(ngo => (
+                  <SelectItem key={ngo.id} value={ngo.id}>{ngo.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       )}
       
       {donationType !== "money" && (
         <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="ngo">Select NGO to donate to</Label>
+            <Select value={selectedNgo || ""} onValueChange={setSelectedNgo}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an NGO" />
+              </SelectTrigger>
+              <SelectContent>
+                {ngos.map(ngo => (
+                  <SelectItem key={ngo.id} value={ngo.id}>{ngo.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           <div className="space-y-2">
             <Label htmlFor="donationDetails">
               {donationMode === "offline" ? "Your donation details (what you'd like to donate)" : "Details for online donation"}
@@ -506,6 +553,7 @@ const DonatePage = () => {
           <p className="text-gray-300">Donation Type: <span className="text-white">{donationType}</span></p>
           <p className="text-gray-300">Donation Mode: <span className="text-white">{donationMode}</span></p>
           {donationType === "money" && amount && <p className="text-gray-300">Amount: <span className="text-white">₹{amount}</span></p>}
+          <p className="text-gray-300">NGO: <span className="text-white">{ngos.find(ngo => ngo.id === selectedNgo)?.name || "Not selected"}</span></p>
         </div>
         {otherDetails && (
           <div className="mt-2">

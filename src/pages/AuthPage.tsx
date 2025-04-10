@@ -70,6 +70,9 @@ const AuthPage = () => {
     
     if (!success && error) {
       setError(error.message || "Failed to sign up");
+    } else {
+      // If signup was successful, show a message and redirect
+      navigate("/");
     }
   };
 
