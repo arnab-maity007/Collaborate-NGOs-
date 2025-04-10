@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,8 +17,52 @@ const Auth = ({ onClose }: AuthProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [useDigilocker, setUseDigilocker] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const handleAuthentication = (type: "login" | "register") => {
+    // Validate inputs
+    if (type === "login") {
+      if (!email || !password) {
+        toast({
+          title: "Missing information",
+          description: "Please enter your email and password.",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      if (!email || !password || !name || !confirmPassword) {
+        toast({
+          title: "Missing information",
+          description: "Please fill in all required fields.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        toast({
+          title: "Passwords don't match",
+          description: "Please ensure your passwords match.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (!agreeToTerms) {
+        toast({
+          title: "Terms of Service",
+          description: "Please agree to the Terms of Service to continue.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     setIsLoading(true);
     
     // Simulate authentication process
@@ -72,11 +117,11 @@ const Auth = ({ onClose }: AuthProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="glass-card w-full max-w-md relative">
+      <Card className="glass-card w-full max-w-md relative transform transition-all duration-300 hover:shadow-2xl">
         {onClose && (
           <button 
             onClick={onClose}
-            className="absolute right-4 top-4 text-gray-400 hover:text-white"
+            className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors duration-300"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -85,8 +130,8 @@ const Auth = ({ onClose }: AuthProps) => {
         
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="register">Register</TabsTrigger>
+            <TabsTrigger value="login" className="transition-colors duration-300">Login</TabsTrigger>
+            <TabsTrigger value="register" className="transition-colors duration-300">Register</TabsTrigger>
           </TabsList>
           
           <TabsContent value="login" className="p-6 space-y-4">
@@ -98,7 +143,7 @@ const Auth = ({ onClose }: AuthProps) => {
             <div className="space-y-4">
               <Button 
                 variant="outline" 
-                className="w-full border-white/20 flex items-center justify-center"
+                className="w-full border-white/20 flex items-center justify-center hover:bg-white/10 transition-all duration-300"
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
               >
@@ -114,16 +159,32 @@ const Auth = ({ onClose }: AuthProps) => {
               
               <div className="space-y-2">
                 <Label htmlFor="login-email">Email</Label>
-                <Input id="login-email" type="email" placeholder="Enter your email" />
+                <Input 
+                  id="login-email" 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="login-password">Password</Label>
-                <Input id="login-password" type="password" placeholder="Enter your password" />
+                <Input 
+                  id="login-password" 
+                  type="password" 
+                  placeholder="Enter your password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
               
               <div className="flex items-center space-x-2">
-                <Checkbox id="login-digilocker" checked={useDigilocker} onCheckedChange={(checked) => setUseDigilocker(!!checked)} />
+                <Checkbox 
+                  id="login-digilocker" 
+                  checked={useDigilocker} 
+                  onCheckedChange={(checked) => setUseDigilocker(!!checked)} 
+                />
                 <Label 
                   htmlFor="login-digilocker" 
                   className="text-sm flex items-center cursor-pointer"
@@ -146,7 +207,7 @@ const Auth = ({ onClose }: AuthProps) => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full text-xs border-theme-accent-400 text-theme-accent-300"
+                    className="w-full text-xs border-theme-accent-400 text-theme-accent-300 hover:bg-theme-accent-400/20 transition-colors duration-300"
                     onClick={handleDigiLockerAuth}
                   >
                     <Fingerprint className="h-3 w-3 mr-1" />
@@ -156,7 +217,7 @@ const Auth = ({ onClose }: AuthProps) => {
               )}
               
               <Button
-                className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
+                className="w-full bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105"
                 disabled={isLoading}
                 onClick={() => handleAuthentication("login")}
               >
@@ -174,7 +235,7 @@ const Auth = ({ onClose }: AuthProps) => {
               </Button>
               
               <div className="text-center">
-                <a href="#" className="text-sm text-theme-accent-300 hover:underline">
+                <a href="#" className="text-sm text-theme-accent-300 hover:underline transition-colors duration-300">
                   Forgot password?
                 </a>
               </div>
@@ -190,7 +251,7 @@ const Auth = ({ onClose }: AuthProps) => {
             <div className="space-y-4">
               <Button 
                 variant="outline" 
-                className="w-full border-white/20 flex items-center justify-center"
+                className="w-full border-white/20 flex items-center justify-center hover:bg-white/10 transition-all duration-300"
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
               >
@@ -206,26 +267,54 @@ const Auth = ({ onClose }: AuthProps) => {
               
               <div className="space-y-2">
                 <Label htmlFor="register-name">Full Name</Label>
-                <Input id="register-name" type="text" placeholder="Enter your full name" />
+                <Input 
+                  id="register-name" 
+                  type="text" 
+                  placeholder="Enter your full name" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="register-email">Email</Label>
-                <Input id="register-email" type="email" placeholder="Enter your email" />
+                <Input 
+                  id="register-email" 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="register-password">Password</Label>
-                <Input id="register-password" type="password" placeholder="Create a password" />
+                <Input 
+                  id="register-password" 
+                  type="password" 
+                  placeholder="Create a password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="register-confirm-password">Confirm Password</Label>
-                <Input id="register-confirm-password" type="password" placeholder="Confirm your password" />
+                <Input 
+                  id="register-confirm-password" 
+                  type="password" 
+                  placeholder="Confirm your password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
               </div>
               
               <div className="flex items-center space-x-2">
-                <Checkbox id="register-digilocker" checked={useDigilocker} onCheckedChange={(checked) => setUseDigilocker(!!checked)} />
+                <Checkbox 
+                  id="register-digilocker" 
+                  checked={useDigilocker} 
+                  onCheckedChange={(checked) => setUseDigilocker(!!checked)} 
+                />
                 <Label 
                   htmlFor="register-digilocker" 
                   className="text-sm flex items-center cursor-pointer"
@@ -249,7 +338,7 @@ const Auth = ({ onClose }: AuthProps) => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300"
+                      className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300 hover:bg-theme-accent-400/20 transition-colors duration-300"
                       onClick={handleDigiLockerAuth}
                     >
                       <Fingerprint className="h-3 w-3 mr-1" />
@@ -258,7 +347,7 @@ const Auth = ({ onClose }: AuthProps) => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300"
+                      className="text-xs flex-1 border-theme-accent-400 text-theme-accent-300 hover:bg-theme-accent-400/20 transition-colors duration-300"
                     >
                       <Mail className="h-3 w-3 mr-1" />
                       Verify with OTP
@@ -268,17 +357,21 @@ const Auth = ({ onClose }: AuthProps) => {
               )}
               
               <div className="flex items-center space-x-2">
-                <Checkbox id="register-terms" />
+                <Checkbox 
+                  id="register-terms" 
+                  checked={agreeToTerms}
+                  onCheckedChange={(checked) => setAgreeToTerms(!!checked)}
+                />
                 <Label 
                   htmlFor="register-terms" 
                   className="text-sm"
                 >
-                  I agree to the <a href="#" className="text-theme-accent-300 hover:underline">Terms of Service</a> and <a href="#" className="text-theme-accent-300 hover:underline">Privacy Policy</a>
+                  I agree to the <a href="#" className="text-theme-accent-300 hover:underline transition-colors duration-300">Terms of Service</a> and <a href="#" className="text-theme-accent-300 hover:underline transition-colors duration-300">Privacy Policy</a>
                 </Label>
               </div>
               
               <Button
-                className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
+                className="w-full bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105"
                 disabled={isLoading}
                 onClick={() => handleAuthentication("register")}
               >

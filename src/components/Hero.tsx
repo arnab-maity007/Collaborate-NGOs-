@@ -1,8 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SearchNGOs from "./SearchNGOs";
 
 interface Quote {
   text: string;
@@ -76,7 +76,7 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
           <Button 
             size="lg" 
-            className="bg-theme-accent-400 hover:bg-theme-accent-500 text-lg px-8"
+            className="bg-theme-accent-400 hover:bg-theme-accent-500 text-lg px-8 transition-all duration-300 transform hover:scale-105"
             onClick={() => navigate('/donate')}
           >
             Donate Now
@@ -84,18 +84,20 @@ const Hero = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="text-lg px-8 border-white/20 hover:bg-white/5"
+            className="text-lg px-8 border-white/20 hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
             onClick={() => scrollToSection("about")}
           >
             Learn More
           </Button>
         </div>
+        
+        <SearchNGOs />
       </div>
       
       <div className="absolute bottom-10 left-0 right-0 flex justify-center animate-pulse-light">
         <button 
           onClick={() => scrollToSection("stats")} 
-          className="text-white"
+          className="text-white transition-transform duration-300 hover:scale-110"
           aria-label="Scroll down"
         >
           <ArrowDown className="w-6 h-6" />

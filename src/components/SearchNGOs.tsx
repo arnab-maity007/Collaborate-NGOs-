@@ -1,0 +1,59 @@
+
+import { useState } from "react";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+
+const SearchNGOs = () => {
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSearch = () => {
+    if (!query.trim()) {
+      toast({
+        title: "Please enter a search query",
+        description: "Enter what type of donation you're interested in",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Navigate to NGO list page with search query
+    navigate(`/ngo-list?search=${encodeURIComponent(query)}`);
+  };
+
+  return (
+    <div className="w-full max-w-md mx-auto mt-8 glass-card p-4">
+      <div className="flex flex-col space-y-2">
+        <label htmlFor="ngo-search" className="text-white text-sm font-medium">
+          Search for donation opportunities:
+        </label>
+        <div className="flex space-x-2">
+          <Input
+            id="ngo-search"
+            placeholder="e.g., education, wildlife, children..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+          <Button 
+            onClick={handleSearch}
+            className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-colors duration-300"
+          >
+            <Search className="h-4 w-4 mr-2" />
+            Search
+          </Button>
+        </div>
+        <p className="text-white/70 text-xs">
+          Tell us what cause you're passionate about, and we'll suggest NGOs for you
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default SearchNGOs;

@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -38,7 +39,7 @@ const StatCounter = ({ title, value, suffix = "", prefix = "", duration = 2000, 
   }, [value, duration]);
   
   return (
-    <Card className="glass-card p-6 text-center">
+    <Card className="glass-card p-6 text-center transition-all duration-300 hover:shadow-lg hover:translate-y-[-5px]">
       <h3 className="text-theme-accent-300 font-medium mb-2">{title}</h3>
       <p className="text-gradient text-4xl font-bold">
         {prefix}{count.toLocaleString(undefined, { minimumFractionDigits: fixed, maximumFractionDigits: fixed })}{suffix}
@@ -64,8 +65,11 @@ const Stats = () => {
         
         <div className="mt-12 text-center">
           <Link to="/ngo-list">
-            <Button variant="outline" className="border-theme-accent-300 text-theme-accent-300">
-              View Our Partner NGOs <ArrowRightIcon className="ml-2 h-4 w-4" />
+            <Button 
+              variant="outline" 
+              className="border-theme-accent-300 text-theme-accent-300 hover:bg-theme-accent-300/10 transition-all duration-300 transform hover:scale-105"
+            >
+              View Our Partner NGOs <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Button>
           </Link>
         </div>
