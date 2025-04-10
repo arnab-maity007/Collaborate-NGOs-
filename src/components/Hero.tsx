@@ -77,8 +77,10 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
           <Button 
             size="lg" 
-            variant="glow"
-            className="text-lg px-8 transition-all duration-300 transform hover:scale-105"
+            className="text-lg px-10 py-6 bg-theme-accent-400 text-white hover:bg-theme-accent-500 
+                     transition-all duration-300 transform hover:scale-110 hover:translate-y-[-5px] hover:shadow-xl
+                     animate-pulse-slow relative after:absolute after:inset-0 after:rounded-md after:shadow-[0_0_15px_5px_rgba(18,130,162,0.6)] 
+                     after:animate-pulse-glow after:z-[-1]"
             onClick={() => navigate('/donate')}
           >
             Donate Now
@@ -86,14 +88,16 @@ const Hero = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="text-lg px-8 border-white/20 hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+            className="text-lg px-8 border-white/20 hover:bg-white/10 transition-all duration-300 transform hover:scale-110 hover:translate-y-[-4px] hover:shadow-lg"
             onClick={() => scrollToSection("about")}
           >
             Learn More
           </Button>
         </div>
         
-        <SearchNGOs />
+        <div className="mt-8 w-full max-w-xl mx-auto">
+          <SearchNGOs />
+        </div>
       </div>
       
       <div className="absolute bottom-10 left-0 right-0 flex justify-center animate-pulse-light">

@@ -123,10 +123,10 @@ const AuthPage = () => {
     setTimeout(() => {
       setIsLoading(false);
       
-      // Store user data in localStorage
+      // Store user data in localStorage with a more realistic name
       const userData = {
-        name: "Google User",
-        email: "user@gmail.com",
+        name: name || "John Doe", // Use entered name if available or default
+        email: email || "user@gmail.com",
         isLoggedIn: true,
         avatar: null
       };
@@ -244,7 +244,7 @@ const AuthPage = () => {
               <div className="space-y-4">
                 <Button 
                   variant="outline" 
-                  className="w-full border-white/20 flex items-center justify-center hover:bg-white/10 transition-all duration-300"
+                  className="w-full border-white/20 flex items-center justify-center hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:translate-y-[-2px]"
                   onClick={handleGoogleAuth}
                   disabled={isLoading}
                 >
@@ -256,6 +256,18 @@ const AuthPage = () => {
                   <div className="flex-grow border-t border-white/10"></div>
                   <span className="flex-shrink mx-3 text-white/50 text-sm">or</span>
                   <div className="flex-grow border-t border-white/10"></div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="login-name">Your Name</Label>
+                  <Input 
+                    id="login-name" 
+                    type="text" 
+                    placeholder="Enter your name" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                  />
                 </div>
                 
                 <div className="space-y-2">
@@ -320,7 +332,7 @@ const AuthPage = () => {
                 )}
                 
                 <Button
-                  className="w-full bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105"
+                  className="w-full bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-110 hover:translate-y-[-3px] hover:shadow-lg"
                   disabled={isLoading}
                   onClick={() => handleAuthentication("login")}
                 >

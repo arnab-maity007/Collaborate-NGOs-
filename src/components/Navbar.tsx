@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, Wallet, Gift, User, LogOut } from "lucide-react";
+import { Menu, X, LogIn, Wallet, Gift, User, LogOut, HelpCircle, Mail } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -85,21 +85,21 @@ const Navbar = () => {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="text-gray-300 hover:text-white hover:translate-y-[-2px] transition-all duration-300 px-3 py-2">
+            <Link to="/" className="text-gray-300 hover:text-white hover:translate-y-[-2px] hover:scale-105 transition-all duration-300 px-3 py-2">
               Home
             </Link>
-            <Link to="/about" className="text-gray-300 hover:text-white hover:translate-y-[-2px] transition-all duration-300 px-3 py-2">
+            <Link to="/about" className="text-gray-300 hover:text-white hover:translate-y-[-2px] hover:scale-105 transition-all duration-300 px-3 py-2">
               About
             </Link>
-            <Link to="/ngo-list" className="text-gray-300 hover:text-white hover:translate-y-[-2px] transition-all duration-300 px-3 py-2">
+            <Link to="/ngo-list" className="text-gray-300 hover:text-white hover:translate-y-[-2px] hover:scale-105 transition-all duration-300 px-3 py-2">
               Our NGOs
             </Link>
-            <Link to="/tracker" className="text-gray-300 hover:text-white hover:translate-y-[-2px] transition-all duration-300 px-3 py-2">
+            <Link to="/tracker" className="text-gray-300 hover:text-white hover:translate-y-[-2px] hover:scale-105 transition-all duration-300 px-3 py-2">
               Track Donations
             </Link>
             <Button 
               variant="secondary" 
-              className="ml-4 transition-all duration-300 hover:shadow-lg hover:bg-secondary/90 transform hover:scale-105"
+              className="ml-4 transition-all duration-300 hover:shadow-lg hover:bg-secondary/90 transform hover:scale-110 hover:translate-y-[-3px]"
               onClick={() => connectWallet()}
             >
               {isConnected ? (
@@ -119,7 +119,7 @@ const Navbar = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-9 w-9 transition-all duration-300 hover:ring-2 hover:ring-theme-accent-300">
+                    <Avatar className="h-9 w-9 transition-all duration-300 hover:ring-2 hover:ring-theme-accent-300 hover:scale-110">
                       {userData.avatar ? (
                         <AvatarImage src={userData.avatar} alt={userData.name} />
                       ) : (
@@ -152,6 +152,13 @@ const Navbar = () => {
                     <Gift className="mr-2 h-4 w-4" />
                     <span>My Donations</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-white/10 transition-all duration-300"
+                    onClick={() => window.location.href = 'mailto:support@donata.org'}
+                  >
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Contact Support</span>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem 
                     className="cursor-pointer text-red-400 hover:bg-red-400/10 transition-all duration-300"
@@ -165,7 +172,7 @@ const Navbar = () => {
             ) : (
               <Button 
                 variant="default" 
-                className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105"
+                className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-110 hover:translate-y-[-3px]"
                 onClick={navigateToAuth}
               >
                 <LogIn className="mr-2 h-4 w-4" />
@@ -177,7 +184,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 transition-colors duration-300 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 transition-colors duration-300"
             >
               {isMenuOpen ? (
                 <X className="block h-6 w-6" aria-hidden="true" />
@@ -194,35 +201,35 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-theme-blue-800">
             <Link
               to="/"
-              className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10 transition-colors duration-300"
+              className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10 hover:scale-105 transition-all duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
             <Link
               to="/about"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-300"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10 hover:scale-105 transition-all duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               About
             </Link>
             <Link
               to="/ngo-list"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-300"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10 hover:scale-105 transition-all duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               Our NGOs
             </Link>
             <Link
               to="/tracker"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-300"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10 hover:scale-105 transition-all duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               Track Donations
             </Link>
             <Button 
               variant="secondary" 
-              className="w-full mt-2 transition-all duration-300 hover:shadow-lg hover:bg-secondary/90"
+              className="w-full mt-2 transition-all duration-300 hover:shadow-lg hover:bg-secondary/90 hover:scale-105"
               onClick={() => connectWallet()}
             >
               {isConnected ? "Connected" : "Connect Wallet"}
@@ -249,7 +256,7 @@ const Navbar = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full border-white/10 hover:bg-white/10"
+                    className="w-full border-white/10 hover:bg-white/10 hover:scale-105"
                     onClick={() => {
                       navigate('/profile');
                       setIsMenuOpen(false);
@@ -261,7 +268,7 @@ const Navbar = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full border-white/10 hover:bg-white/10"
+                    className="w-full border-white/10 hover:bg-white/10 hover:scale-105"
                     onClick={() => {
                       handleLogout();
                       setIsMenuOpen(false);
@@ -271,11 +278,23 @@ const Navbar = () => {
                     Logout
                   </Button>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2 border-white/10 hover:bg-white/10 hover:scale-105"
+                  onClick={() => {
+                    window.location.href = 'mailto:support@donata.org';
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Contact Support
+                </Button>
               </div>
             ) : (
               <Button 
                 variant="default" 
-                className="w-full mt-2 bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300"
+                className="w-full mt-2 bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 hover:scale-105"
                 onClick={() => {
                   navigateToAuth();
                   setIsMenuOpen(false);

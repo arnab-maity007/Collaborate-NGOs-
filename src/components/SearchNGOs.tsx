@@ -26,9 +26,9 @@ const SearchNGOs = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto mt-8 glass-card p-4 hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-5px]">
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="ngo-search" className="text-white text-sm font-medium">
+    <div className="w-full max-w-xl mx-auto mt-8 glass-card p-6 hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-5px]">
+      <div className="flex flex-col space-y-3">
+        <label htmlFor="ngo-search" className="text-white text-base font-medium">
           Search for donation opportunities:
         </label>
         <div className="flex space-x-2">
@@ -37,18 +37,18 @@ const SearchNGOs = () => {
             placeholder="e.g., education, wildlife, children..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:ring-2 focus:ring-theme-accent-300/50 transition-all duration-300"
+            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:ring-2 focus:ring-theme-accent-300/50 transition-all duration-300 py-6 text-lg"
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
           <Button 
             onClick={handleSearch}
-            className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
+            className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-110 hover:shadow-md hover:translate-y-[-3px] py-6 px-6"
           >
-            <Search className="h-4 w-4 mr-2" />
+            <Search className="h-5 w-5 mr-2" />
             Search
           </Button>
         </div>
-        <p className="text-white/70 text-xs">
+        <p className="text-white/70 text-sm">
           Tell us what cause you're passionate about, and we'll suggest NGOs for you
         </p>
       </div>
