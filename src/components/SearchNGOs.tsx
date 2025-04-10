@@ -26,7 +26,7 @@ const SearchNGOs = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto mt-8 glass-card p-4">
+    <div className="w-full max-w-md mx-auto mt-8 glass-card p-4 hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-5px]">
       <div className="flex flex-col space-y-2">
         <label htmlFor="ngo-search" className="text-white text-sm font-medium">
           Search for donation opportunities:
@@ -37,12 +37,12 @@ const SearchNGOs = () => {
             placeholder="e.g., education, wildlife, children..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:ring-2 focus:ring-theme-accent-300/50 transition-all duration-300"
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
           <Button 
             onClick={handleSearch}
-            className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-colors duration-300"
+            className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
           >
             <Search className="h-4 w-4 mr-2" />
             Search

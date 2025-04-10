@@ -11,6 +11,7 @@ import AboutPage from "./pages/AboutPage";
 import TrackerPage from "./pages/TrackerPage";
 import NGOListPage from "./pages/NGOListPage";
 import DonatePage from "./pages/DonatePage";
+import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
               <Route path="/tracker" element={<TrackerPage />} />
               <Route path="/ngo-list" element={<NGOListPage />} />
               <Route path="/donate" element={<DonatePage />} />
+              <Route path="/auth" element={<AuthPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -1,16 +1,40 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Menu, X, LogIn, Wallet, Gift } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, LogIn, Wallet, Gift, User, LogOut } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import Auth from "@/components/Auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+interface UserData {
+  name: string;
+  email: string;
+  isLoggedIn: boolean;
+  avatar: string | null;
+}
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -25,8 +49,26 @@ const Navbar = () => {
     });
   };
 
-  const toggleAuthModal = () => {
-    setShowAuthModal(!showAuthModal);
+  const handleLogout = () => {
+    localStorage.removeItem('userData');
+    setUserData(null);
+    toast({
+      title: "Logged out",
+      description: "You have been logged out successfully",
+    });
+  };
+
+  const navigateToAuth = () => {
+    navigate('/auth');
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   };
 
   return (
@@ -72,14 +114,64 @@ const Navbar = () => {
                 </div>
               )}
             </Button>
-            <Button 
-              variant="default" 
-              className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105"
-              onClick={toggleAuthModal}
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              <span>Sign Up / Login</span>
-            </Button>
+            
+            {userData?.isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-9 w-9 transition-all duration-300 hover:ring-2 hover:ring-theme-accent-300">
+                      {userData.avatar ? (
+                        <AvatarImage src={userData.avatar} alt={userData.name} />
+                      ) : (
+                        <AvatarFallback className="bg-theme-accent-400 text-white">
+                          {getInitials(userData.name)}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 glass-card border-white/10" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none text-white">{userData.name}</p>
+                      <p className="text-xs leading-none text-white/70">{userData.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-white/10 transition-all duration-300"
+                    onClick={() => navigate('/profile')}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-white/10 transition-all duration-300"
+                    onClick={() => navigate('/tracker')}
+                  >
+                    <Gift className="mr-2 h-4 w-4" />
+                    <span>My Donations</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem 
+                    className="cursor-pointer text-red-400 hover:bg-red-400/10 transition-all duration-300"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                variant="default" 
+                className="bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300 transform hover:scale-105"
+                onClick={navigateToAuth}
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                <span>Sign Up / Login</span>
+              </Button>
+            )}
           </div>
           
           <div className="md:hidden">
@@ -135,21 +227,66 @@ const Navbar = () => {
             >
               {isConnected ? "Connected" : "Connect Wallet"}
             </Button>
-            <Button 
-              variant="default" 
-              className="w-full mt-2 bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300"
-              onClick={() => {
-                toggleAuthModal();
-                setIsMenuOpen(false);
-              }}
-            >
-              Sign Up / Login
-            </Button>
+            
+            {userData?.isLoggedIn ? (
+              <div className="mt-2 p-3 bg-white/5 rounded-md">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10">
+                    {userData.avatar ? (
+                      <AvatarImage src={userData.avatar} alt={userData.name} />
+                    ) : (
+                      <AvatarFallback className="bg-theme-accent-400 text-white">
+                        {getInitials(userData.name)}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium text-white">{userData.name}</p>
+                    <p className="text-xs text-white/70">{userData.email}</p>
+                  </div>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-white/10 hover:bg-white/10"
+                    onClick={() => {
+                      navigate('/profile');
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-white/10 hover:bg-white/10"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button 
+                variant="default" 
+                className="w-full mt-2 bg-theme-accent-400 hover:bg-theme-accent-500 transition-all duration-300"
+                onClick={() => {
+                  navigateToAuth();
+                  setIsMenuOpen(false);
+                }}
+              >
+                Sign Up / Login
+              </Button>
+            )}
           </div>
         </div>
       )}
-      
-      {showAuthModal && <Auth onClose={toggleAuthModal} />}
     </nav>
   );
 };

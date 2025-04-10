@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -76,7 +77,8 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
           <Button 
             size="lg" 
-            className="bg-theme-accent-400 hover:bg-theme-accent-500 text-lg px-8 transition-all duration-300 transform hover:scale-105"
+            variant="glow"
+            className="text-lg px-8 transition-all duration-300 transform hover:scale-105"
             onClick={() => navigate('/donate')}
           >
             Donate Now
