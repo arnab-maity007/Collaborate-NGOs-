@@ -1,79 +1,65 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, ExternalLink, Clock, Check, Calendar } from "lucide-react";
-
-interface DonationData {
-  id: string;
-  date: string;
-  amount: string;
-  category: string;
-  status: "pending" | "processing" | "completed";
-  ngo: {
-    name: string;
-    walletAddress: string;
-  };
-  usageDetails?: string;
-}
-
-const mockDonations: DonationData[] = [
-  {
-    id: "0x8a5b7d8e3f1c2a9b4e5d6c8f7a2b3e1d4c5f6a8b",
-    date: "2025-03-15",
-    amount: "₹5,000",
-    category: "Children",
-    status: "completed",
-    ngo: {
-      name: "Child Hope Foundation",
-      walletAddress: "0x1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s"
-    },
-    usageDetails: "Educational materials and school supplies for 20 children"
-  },
-  {
-    id: "0x7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d",
-    date: "2025-03-10",
-    amount: "₹2,500",
-    category: "Humans (Family)",
-    status: "processing",
-    ngo: {
-      name: "Family Support Network",
-      walletAddress: "0x9s8r7q6p5o4n3m2l1k0j9i8h7g6f5e4d3c2b1a"
-    }
-  },
-  {
-    id: "0x2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1t",
-    date: "2025-03-05",
-    amount: "₹1,000",
-    category: "Animals",
-    status: "pending",
-    ngo: {
-      name: "Animal Shelter Alliance",
-      walletAddress: "0x2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t"
-    }
-  }
-];
+import { useToast } from "@/components/ui/use-toast";
+import { getDonationByTransactionId } from "@/services/donationService";
+import { Donation } from "@/types/supabase";
 
 const DonationTracker = () => {
-  const [transactionId, setTransactionId] = useState("");
-  const [searchResults, setSearchResults] = useState<DonationData[]>([]);
+  const [searchParams] = useSearchParams();
+  const initialTxId = searchParams.get("txid") || "";
+  
+  const [transactionId, setTransactionId] = useState(initialTxId);
+  const [searchResults, setSearchResults] = useState<Donation[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSearch = () => {
+  useEffect(() => {
+    if (initialTxId) {
+      handleSearch();
+    }
+  }, [initialTxId]);
+
+  const handleSearch = async () => {
     if (!transactionId.trim()) return;
     
     setIsSearching(true);
     
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      const results = mockDonations.filter(donation => 
-        donation.id.toLowerCase().includes(transactionId.toLowerCase())
-      );
-      setSearchResults(results);
+    try {
+      const donation = await getDonationByTransactionId(transactionId);
+      
+      if (donation) {
+        setSearchResults([donation]);
+        
+        // Update URL with transaction ID for easy sharing
+        if (initialTxId !== transactionId) {
+          navigate(`/tracker?txid=${transactionId}`);
+        }
+      } else {
+        setSearchResults([]);
+        toast({
+          title: "No donation found",
+          description: "No donation with this transaction ID was found. Please check and try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error searching for donation:", error);
+      toast({
+        title: "Error occurred",
+        description: "There was a problem tracking your donation. Please try again later.",
+        variant: "destructive",
+      });
+      setSearchResults([]);
+    } finally {
       setIsSearching(false);
-    }, 1500);
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -144,7 +130,10 @@ const DonationTracker = () => {
               <Card key={donation.id} className="glass-card p-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold text-gradient-blue">{donation.ngo.name}</h3>
+                    <h3 className="text-xl font-semibold text-gradient-blue">
+                      {donation.category} Donation
+                      {donation.subcategory ? ` (${donation.subcategory})` : ''}
+                    </h3>
                     <div className="flex items-center space-x-2 text-sm">
                       {getStatusIcon(donation.status)}
                       <span className="text-gray-300">{getStatusText(donation.status)}</span>
@@ -155,7 +144,7 @@ const DonationTracker = () => {
                     <div>
                       <p className="text-sm text-gray-400">Transaction ID</p>
                       <div className="flex items-center">
-                        <p className="text-white text-sm truncate">{donation.id}</p>
+                        <p className="text-white text-sm truncate">{donation.transaction_id}</p>
                         <Button variant="ghost" size="sm" className="ml-2 h-6 w-6 p-0">
                           <ExternalLink className="h-3 w-3" />
                           <span className="sr-only">View on Explorer</span>
@@ -167,18 +156,20 @@ const DonationTracker = () => {
                       <p className="text-sm text-gray-400">Date</p>
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                        <p className="text-white">{new Date(donation.date).toLocaleDateString()}</p>
+                        <p className="text-white">{new Date(donation.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                     
                     <div>
                       <p className="text-sm text-gray-400">Amount</p>
-                      <p className="text-white">{donation.amount}</p>
+                      <p className="text-white">
+                        {donation.amount ? `₹${donation.amount}` : 'Non-monetary donation'}
+                      </p>
                     </div>
                     
                     <div>
-                      <p className="text-sm text-gray-400">Category</p>
-                      <p className="text-white">{donation.category}</p>
+                      <p className="text-sm text-gray-400">Donation Type</p>
+                      <p className="text-white capitalize">{donation.donation_type}</p>
                     </div>
                   </div>
                   
@@ -189,8 +180,22 @@ const DonationTracker = () => {
                     </TabsList>
                     <TabsContent value="details" className="p-4 mt-2 neo-blur">
                       <div className="space-y-2">
-                        <p className="text-sm text-gray-400">NGO Wallet Address</p>
-                        <p className="text-sm text-white font-mono">{donation.ngo.walletAddress}</p>
+                        <p className="text-sm text-gray-400">Donation Mode</p>
+                        <p className="text-sm text-white capitalize">{donation.donation_mode || "Online"}</p>
+                        
+                        {donation.delivery_address && (
+                          <>
+                            <p className="text-sm text-gray-400 mt-3">Delivery Address</p>
+                            <p className="text-sm text-white">{donation.delivery_address}</p>
+                          </>
+                        )}
+                        
+                        {donation.other_details && (
+                          <>
+                            <p className="text-sm text-gray-400 mt-3">Additional Details</p>
+                            <p className="text-sm text-white">{donation.other_details}</p>
+                          </>
+                        )}
                         
                         <div className="pt-2">
                           <p className="text-sm text-gray-400">Verification</p>
@@ -202,11 +207,11 @@ const DonationTracker = () => {
                       </div>
                     </TabsContent>
                     <TabsContent value="usage" className="p-4 mt-2 neo-blur">
-                      {donation.status === "completed" && donation.usageDetails ? (
+                      {donation.status === "completed" && donation.impact_report ? (
                         <div>
-                          <p className="text-sm text-gray-300">{donation.usageDetails}</p>
+                          <p className="text-sm text-gray-300">{donation.impact_report}</p>
                           <div className="mt-4 text-sm text-theme-accent-300">
-                            Impact report available in 7 days
+                            Impact report has been verified and published to the blockchain
                           </div>
                         </div>
                       ) : (

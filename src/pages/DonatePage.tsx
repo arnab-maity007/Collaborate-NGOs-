@@ -1,5 +1,5 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { submitDonation } from "@/services/donationService";
 import { 
   Users, Heart, Shield, Lightbulb, Utensils, Banknote, Book,
   Package, ChevronRight, ChevronLeft, Send, Calendar, MapPin,
@@ -27,6 +29,8 @@ type DonationMode = "online" | "offline";
 
 const DonatePage = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Personal information
   const [name, setName] = useState("");
@@ -47,6 +51,13 @@ const DonatePage = () => {
   const [amount, setAmount] = useState<string>("");
   const [otherDetails, setOtherDetails] = useState<string>("");
   const [processingDonation, setProcessingDonation] = useState(false);
+
+  useEffect(() => {
+    // Pre-fill email if user is logged in
+    if (user) {
+      setEmail(user.email || "");
+    }
+  }, [user]);
 
   const handleCategorySelect = (selected: DonationCategory) => {
     setCategory(selected);
@@ -76,7 +87,18 @@ const DonatePage = () => {
     setStep(6);
   };
 
-  const handleSubmitDonation = () => {
+  const handleSubmitDonation = async () => {
+    // Check if user is logged in
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please login or create an account to make a donation",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
     if (!name || !email || !date) {
       toast({
         title: "Missing personal information",
@@ -106,23 +128,37 @@ const DonatePage = () => {
 
     setProcessingDonation(true);
 
-    // Simulate blockchain transaction
-    setTimeout(() => {
+    // Prepare donation data
+    const donationData = {
+      category: category,
+      subcategory: category === "animals" ? animalSubcategory : null,
+      donation_type: donationType,
+      donation_mode: donationMode,
+      amount: donationType === "money" ? parseFloat(amount) : null,
+      other_details: otherDetails || null,
+      delivery_address: donationMode === "offline" ? `${address}, ${city}, ${state}, ${pincode}` : null,
+    };
+
+    // Submit to Supabase
+    const { success, donation, error } = await submitDonation(donationData);
+    
+    setProcessingDonation(false);
+
+    if (success && donation) {
       toast({
         title: "Donation successful!",
-        description: "Your donation has been recorded on the blockchain. Thank you for your generosity!",
+        description: "Your donation has been recorded. Thank you for your generosity!",
       });
       
-      // Reset form
-      setCategory(null);
-      setAnimalSubcategory(null);
-      setDonationType(null);
-      setDonationMode(null);
-      setAmount("");
-      setOtherDetails("");
-      setStep(1);
-      setProcessingDonation(false);
-    }, 3000);
+      // Redirect to tracker page with the transaction ID
+      navigate(`/tracker?txid=${donation.transaction_id}`);
+    } else {
+      toast({
+        title: "Donation failed",
+        description: error?.message || "There was an error processing your donation. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const renderPersonalInformation = () => (
@@ -148,6 +184,7 @@ const DonatePage = () => {
             onChange={(e) => setEmail(e.target.value)} 
             placeholder="Enter your email address"
             required
+            disabled={!!user}
           />
         </div>
         <div className="space-y-2">

@@ -9,6 +9,90 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      donations: {
+        Row: {
+          amount: number | null
+          category: string
+          created_at: string
+          delivery_address: string | null
+          donation_mode: string | null
+          donation_type: string
+          id: string
+          impact_report: string | null
+          ngo_id: string | null
+          other_details: string | null
+          status: string
+          subcategory: string | null
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          category: string
+          created_at?: string
+          delivery_address?: string | null
+          donation_mode?: string | null
+          donation_type: string
+          id?: string
+          impact_report?: string | null
+          ngo_id?: string | null
+          other_details?: string | null
+          status?: string
+          subcategory?: string | null
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          category?: string
+          created_at?: string
+          delivery_address?: string | null
+          donation_mode?: string | null
+          donation_type?: string
+          id?: string
+          impact_report?: string | null
+          ngo_id?: string | null
+          other_details?: string | null
+          status?: string
+          subcategory?: string | null
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ngos: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          impact_reports: number | null
+          is_verified: boolean | null
+          name: string
+          wallet_address: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          impact_reports?: number | null
+          is_verified?: boolean | null
+          name: string
+          wallet_address: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          impact_reports?: number | null
+          is_verified?: boolean | null
+          name?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
