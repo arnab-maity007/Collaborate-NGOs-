@@ -465,12 +465,12 @@ const DonatePage = () => {
           <div className="space-y-2">
             <Label htmlFor="ngo">Select NGO to donate to</Label>
             <Select value={selectedNgo || ""} onValueChange={setSelectedNgo}>
-              <SelectTrigger className="bg-theme-blue-800 border-gray-700">
+              <SelectTrigger className="bg-theme-blue-800 border-gray-700 text-white">
                 <SelectValue placeholder="Select an NGO" />
               </SelectTrigger>
               <SelectContent className="bg-theme-blue-700 border-gray-700">
                 {ngos.map(ngo => (
-                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-600">
+                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-600 focus:bg-theme-blue-600 focus:text-white">
                     {ngo.name}
                   </SelectItem>
                 ))}
@@ -485,12 +485,12 @@ const DonatePage = () => {
           <div className="space-y-2">
             <Label htmlFor="ngo">Select NGO to donate to</Label>
             <Select value={selectedNgo || ""} onValueChange={setSelectedNgo}>
-              <SelectTrigger className="bg-theme-blue-800 border-gray-700">
+              <SelectTrigger className="bg-theme-blue-800 border-gray-700 text-white">
                 <SelectValue placeholder="Select an NGO" />
               </SelectTrigger>
               <SelectContent className="bg-theme-blue-700 border-gray-700">
                 {ngos.map(ngo => (
-                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-600">
+                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-600 focus:bg-theme-blue-600 focus:text-white">
                     {ngo.name}
                   </SelectItem>
                 ))}

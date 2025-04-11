@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,7 +20,7 @@ const Navbar = () => {
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, userMetadata } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -62,6 +63,14 @@ const Navbar = () => {
     
     // Otherwise, take first 2 characters of username
     return username.substring(0, 2).toUpperCase();
+  };
+
+  // Get user's display name from metadata or use email
+  const getUserDisplayName = () => {
+    if (userMetadata?.name) {
+      return userMetadata.name;
+    }
+    return user?.email?.split('@')[0] || 'User';
   };
 
   return (
@@ -111,8 +120,11 @@ const Navbar = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-9 w-9 transition-all duration-300 hover:ring-2 hover:ring-theme-accent-300 hover:scale-110">
+                  <Button variant="ghost" className="relative h-9 flex gap-2 items-center px-2 rounded-full hover:bg-white/10">
+                    <span className="text-sm font-medium text-white hidden sm:inline-block">
+                      {getUserDisplayName()}
+                    </span>
+                    <Avatar className="h-9 w-9 transition-all duration-300 hover:ring-2 hover:ring-theme-accent-300">
                       <AvatarFallback className="bg-theme-accent-400 text-white">
                         {getInitials(user.email || "")}
                       </AvatarFallback>
@@ -122,8 +134,11 @@ const Navbar = () => {
                 <DropdownMenuContent className="w-56 glass-card border-white/10" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none text-white">{user.email}</p>
-                      <p className="text-xs leading-none text-white/70">Signed in account</p>
+                      <p className="text-sm font-medium leading-none text-white">{getUserDisplayName()}</p>
+                      <p className="text-xs leading-none text-white/70">{user.email}</p>
+                      {userMetadata?.profession && (
+                        <p className="text-xs leading-none text-white/70">{userMetadata.profession}</p>
+                      )}
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-white/10" />

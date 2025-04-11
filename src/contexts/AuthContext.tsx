@@ -11,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ success: boolean, error: AuthError | null }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  userMetadata: UserMetadata | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,6 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userMetadata, setUserMetadata] = useState<UserMetadata | null>(null);
 
   useEffect(() => {
     // Get initial session
@@ -27,6 +29,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data } = await supabase.auth.getSession();
         setSession(data.session);
         setUser(data.session?.user || null);
+        
+        // If user exists, set their metadata
+        if (data.session?.user) {
+          setUserMetadata(data.session.user.user_metadata as UserMetadata || null);
+        }
       } catch (error) {
         console.error("Error fetching initial session:", error);
       } finally {
@@ -40,6 +47,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user || null);
+      
+      // Update metadata when auth state changes
+      if (session?.user) {
+        setUserMetadata(session.user.user_metadata as UserMetadata || null);
+      } else {
+        setUserMetadata(null);
+      }
+      
       setLoading(false);
     });
 
@@ -93,7 +108,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
-    loading
+    loading,
+    userMetadata
   };
 
   return (
