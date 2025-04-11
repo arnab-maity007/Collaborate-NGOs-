@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -88,31 +87,31 @@ const DonationFlow = () => {
       <h3 className="text-xl font-semibold text-gradient">Who would you like to help?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         <CategoryCard 
-          icon={<Users />} 
+          icon={<Users className="text-[#6E59A5]" />} 
           label="Humans" 
           onClick={() => handleCategorySelect("human")} 
           selected={category === "human"}
         />
         <CategoryCard 
-          icon={<Heart />} 
+          icon={<Heart className="text-[#6E59A5]" />} 
           label="Animals" 
           onClick={() => handleCategorySelect("animals")} 
           selected={category === "animals"}
         />
         <CategoryCard 
-          icon={<Baby />} 
+          icon={<Baby className="text-[#6E59A5]" />} 
           label="Children" 
           onClick={() => handleCategorySelect("children")} 
           selected={category === "children"}
         />
         <CategoryCard 
-          icon={<Shield />} 
+          icon={<Shield className="text-[#6E59A5]" />} 
           label="Army" 
           onClick={() => handleCategorySelect("army")} 
           selected={category === "army"}
         />
         <CategoryCard 
-          icon={<Lightbulb />} 
+          icon={<Lightbulb className="text-[#6E59A5]" />} 
           label="Research" 
           onClick={() => handleCategorySelect("research")} 
           selected={category === "research"}
@@ -126,25 +125,25 @@ const DonationFlow = () => {
       <h3 className="text-xl font-semibold text-gradient">Which humans would you like to help?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
+          icon={<Users className="h-5 w-5 text-[#6E59A5]" />} 
           label="Men" 
           onClick={() => handleHumanSubcategorySelect("men")} 
           selected={humanSubcategory === "men"}
         />
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
+          icon={<Users className="h-5 w-5 text-[#6E59A5]" />} 
           label="Women" 
           onClick={() => handleHumanSubcategorySelect("women")} 
           selected={humanSubcategory === "women"}
         />
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
+          icon={<Users className="h-5 w-5 text-[#6E59A5]" />} 
           label="Families" 
           onClick={() => handleHumanSubcategorySelect("family")} 
           selected={humanSubcategory === "family"}
         />
         <CategoryCard 
-          icon={<Users className="h-5 w-5" />} 
+          icon={<Users className="h-5 w-5 text-[#6E59A5]" />} 
           label="All" 
           onClick={() => handleHumanSubcategorySelect("all")} 
           selected={humanSubcategory === "all"}
@@ -158,19 +157,19 @@ const DonationFlow = () => {
       <h3 className="text-xl font-semibold text-gradient">What would you like to donate?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <CategoryCard 
-          icon={<Banknote />} 
+          icon={<Banknote className="text-[#6E59A5]" />} 
           label="Money" 
           onClick={() => handleDonationTypeSelect("money")} 
           selected={donationType === "money"}
         />
         <CategoryCard 
-          icon={<Utensils />} 
+          icon={<Utensils className="text-[#6E59A5]" />} 
           label="Food" 
           onClick={() => handleDonationTypeSelect("food")} 
           selected={donationType === "food"}
         />
         <CategoryCard 
-          icon={<Package />} 
+          icon={<Package className="text-[#6E59A5]" />} 
           label="Other" 
           onClick={() => handleDonationTypeSelect("other")} 
           selected={donationType === "other"}
@@ -232,8 +231,8 @@ const DonationFlow = () => {
         </div>
       )}
       
-      <div className="p-4 glass-card space-y-2">
-        <h4 className="text-theme-accent-300 font-semibold">Donation Summary</h4>
+      <div className="p-4 bg-[#6E59A5]/20 rounded-md border border-[#9b87f5] space-y-2">
+        <h4 className="text-[#D6BCFA] font-semibold">Donation Summary</h4>
         <p className="text-sm text-gray-300">Category: {category} {category === "human" ? `(${humanSubcategory})` : ""}</p>
         <p className="text-sm text-gray-300">Donation Type: {donationType}</p>
         {donationType === "money" && amount && <p className="text-sm text-gray-300">Amount: ₹{amount}</p>}
@@ -243,7 +242,7 @@ const DonationFlow = () => {
       <Button
         onClick={handleSubmitDonation}
         disabled={processingDonation}
-        className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
+        className="w-full bg-[#7E69AB] hover:bg-[#6E59A5]"
       >
         {processingDonation ? (
           <div className="flex items-center">
@@ -359,9 +358,9 @@ const CategoryCard = ({
     <button
       onClick={onClick}
       className={`glass-card p-4 flex flex-col items-center justify-center space-y-3 transition-all h-28
-        ${selected ? "bg-theme-accent-400/20 border-theme-accent-400" : "hover:bg-white/5"}`}
+        ${selected ? "bg-[#6E59A5]/30 border-[#9b87f5]" : "hover:bg-white/5"}`}
     >
-      <div className={`${selected ? "text-theme-accent-300" : "text-gray-300"}`}>
+      <div className={`${selected ? "text-[#D6BCFA]" : "text-gray-300"}`}>
         {icon}
       </div>
       <span className={`font-medium ${selected ? "text-white" : "text-gray-300"}`}>{label}</span>

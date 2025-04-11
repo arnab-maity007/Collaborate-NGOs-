@@ -286,43 +286,43 @@ const DonatePage = () => {
       <h3 className="text-xl font-semibold text-gradient">Who would you like to help?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <CategoryCard 
-          icon={<Users />} 
+          icon={<Users className="text-[#6E59A5]" />} 
           label="Needy People" 
           onClick={() => handleCategorySelect("people")} 
           selected={category === "people"}
         />
         <CategoryCard 
-          icon={<Heart />} 
+          icon={<Heart className="text-[#6E59A5]" />} 
           label="Animals" 
           onClick={() => handleCategorySelect("animals")} 
           selected={category === "animals"}
         />
         <CategoryCard 
-          icon={<Shield />} 
+          icon={<Shield className="text-[#6E59A5]" />} 
           label="Army" 
           onClick={() => handleCategorySelect("army")} 
           selected={category === "army"}
         />
         <CategoryCard 
-          icon={<Lightbulb />} 
+          icon={<Lightbulb className="text-[#6E59A5]" />} 
           label="Research" 
           onClick={() => handleCategorySelect("research")} 
           selected={category === "research"}
         />
         <CategoryCard 
-          icon={<Home />} 
+          icon={<Home className="text-[#6E59A5]" />} 
           label="Rural Development" 
           onClick={() => handleCategorySelect("rural")} 
           selected={category === "rural"}
         />
         <CategoryCard 
-          icon={<Leaf />} 
+          icon={<Leaf className="text-[#6E59A5]" />} 
           label="Forestation" 
           onClick={() => handleCategorySelect("forestation")} 
           selected={category === "forestation"}
         />
         <CategoryCard 
-          icon={<Brain />} 
+          icon={<Brain className="text-[#6E59A5]" />} 
           label="Mental Health" 
           onClick={() => handleCategorySelect("mental")} 
           selected={category === "mental"}
@@ -336,37 +336,37 @@ const DonatePage = () => {
       <h3 className="text-xl font-semibold text-gradient">Which animals would you like to help?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <CategoryCard 
-          icon={<Dog className="h-5 w-5" />} 
+          icon={<Dog className="h-5 w-5 text-[#6E59A5]" />} 
           label="Dogs" 
           onClick={() => handleAnimalSubcategorySelect("dogs")} 
           selected={animalSubcategory === "dogs"}
         />
         <CategoryCard 
-          icon={<Cat className="h-5 w-5" />} 
+          icon={<Cat className="h-5 w-5 text-[#6E59A5]" />} 
           label="Cats" 
           onClick={() => handleAnimalSubcategorySelect("cats")} 
           selected={animalSubcategory === "cats"}
         />
         <CategoryCard 
-          icon={<Heart className="h-5 w-5" />} 
+          icon={<Heart className="h-5 w-5 text-[#6E59A5]" />} 
           label="Wildlife" 
           onClick={() => handleAnimalSubcategorySelect("wildlife")} 
           selected={animalSubcategory === "wildlife"}
         />
         <CategoryCard 
-          icon={<Heart className="h-5 w-5" />} 
+          icon={<Heart className="h-5 w-5 text-[#6E59A5]" />} 
           label="Birds" 
           onClick={() => handleAnimalSubcategorySelect("birds")} 
           selected={animalSubcategory === "birds"}
         />
         <CategoryCard 
-          icon={<Heart className="h-5 w-5" />} 
+          icon={<Heart className="h-5 w-5 text-[#6E59A5]" />} 
           label="Marine Life" 
           onClick={() => handleAnimalSubcategorySelect("marine")} 
           selected={animalSubcategory === "marine"}
         />
         <CategoryCard 
-          icon={<Heart className="h-5 w-5" />} 
+          icon={<Heart className="h-5 w-5 text-[#6E59A5]" />} 
           label="All Animals" 
           onClick={() => handleAnimalSubcategorySelect("all")} 
           selected={animalSubcategory === "all"}
@@ -380,37 +380,37 @@ const DonatePage = () => {
       <h3 className="text-xl font-semibold text-gradient">How would you like to help?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <CategoryCard 
-          icon={<Banknote />} 
+          icon={<Banknote className="text-[#6E59A5]" />} 
           label="Money" 
           onClick={() => handleDonationTypeSelect("money")} 
           selected={donationType === "money"}
         />
         <CategoryCard 
-          icon={<Utensils />} 
+          icon={<Utensils className="text-[#6E59A5]" />} 
           label="Food" 
           onClick={() => handleDonationTypeSelect("food")} 
           selected={donationType === "food"}
         />
         <CategoryCard 
-          icon={<Shirt />} 
+          icon={<Shirt className="text-[#6E59A5]" />} 
           label="Clothes" 
           onClick={() => handleDonationTypeSelect("clothes")} 
           selected={donationType === "clothes"}
         />
         <CategoryCard 
-          icon={<Book />} 
+          icon={<Book className="text-[#6E59A5]" />} 
           label="Books" 
           onClick={() => handleDonationTypeSelect("books")} 
           selected={donationType === "books"}
         />
         <CategoryCard 
-          icon={<MessageSquare />} 
+          icon={<MessageSquare className="text-[#6E59A5]" />} 
           label="Teaching" 
           onClick={() => handleDonationTypeSelect("teaching")} 
           selected={donationType === "teaching"}
         />
         <CategoryCard 
-          icon={<Package />} 
+          icon={<Package className="text-[#6E59A5]" />} 
           label="Other" 
           onClick={() => handleDonationTypeSelect("other")} 
           selected={donationType === "other"}
@@ -424,14 +424,14 @@ const DonatePage = () => {
       <h3 className="text-xl font-semibold text-gradient">How would you like to donate?</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
         <CategoryCard 
-          icon={<MapPin className="h-6 w-6" />} 
+          icon={<MapPin className="h-6 w-6 text-[#6E59A5]" />} 
           label="Offline" 
           description="Visit an NGO in person to donate"
           onClick={() => handleDonationModeSelect("offline")} 
           selected={donationMode === "offline"}
         />
         <CategoryCard 
-          icon={<Send className="h-6 w-6" />} 
+          icon={<Send className="h-6 w-6 text-[#6E59A5]" />} 
           label="Online" 
           description="Donate directly through our platform"
           onClick={() => handleDonationModeSelect("online")} 
@@ -527,8 +527,8 @@ const DonatePage = () => {
         </div>
       )}
       
-      <div className="p-4 bg-theme-accent-400/20 rounded-md border border-theme-accent-300 space-y-2">
-        <h4 className="text-theme-accent-300 font-semibold">Donation Summary</h4>
+      <div className="p-4 bg-[#6E59A5]/20 rounded-md border border-[#9b87f5] space-y-2">
+        <h4 className="text-[#D6BCFA] font-semibold">Donation Summary</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <p className="text-gray-300">Name: <span className="text-white">{name}</span></p>
           <p className="text-gray-300">Email: <span className="text-white">{email}</span></p>
@@ -560,7 +560,7 @@ const DonatePage = () => {
       <Button
         onClick={handleSubmitDonation}
         disabled={processingDonation}
-        className="w-full bg-theme-accent-400 hover:bg-theme-accent-500"
+        className="w-full bg-[#7E69AB] hover:bg-[#6E59A5]"
       >
         {processingDonation ? (
           <div className="flex items-center">
@@ -720,9 +720,9 @@ const CategoryCard = ({
     <button
       onClick={onClick}
       className={`glass-card p-4 flex flex-col items-center justify-center space-y-3 transition-all ${description ? "h-auto py-6" : "h-28"}
-        ${selected ? "bg-theme-accent-400/20 border-theme-accent-400" : "hover:bg-white/5"}`}
+        ${selected ? "bg-[#6E59A5]/30 border-[#9b87f5]" : "hover:bg-white/5"}`}
     >
-      <div className={`${selected ? "text-theme-accent-300" : "text-gray-300"}`}>
+      <div className={`${selected ? "text-[#D6BCFA]" : "text-gray-300"}`}>
         {icon}
       </div>
       <span className={`font-medium ${selected ? "text-white" : "text-gray-300"}`}>{label}</span>
