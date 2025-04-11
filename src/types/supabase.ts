@@ -14,7 +14,7 @@ export interface Donation {
   other_details: string | null;
   delivery_address: string | null;
   impact_report: string | null;
-  ngos?: NGO | null;
+  ngos?: NGO | null | { error: boolean }; // Added error type to handle error state
 }
 
 export interface NGO {

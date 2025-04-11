@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, LogIn, Wallet, Gift, User, LogOut, HelpCircle, Mail } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,27 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface UserData {
-  name: string;
-  email: string;
-  isLoggedIn: boolean;
-  avatar: string | null;
-}
-
 const Navbar = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    // Check if user is logged in
-    const storedUserData = localStorage.getItem('userData');
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
-    }
-  }, []);
+  const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -49,26 +34,34 @@ const Navbar = () => {
     });
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('userData');
-    setUserData(null);
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully",
-    });
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
   };
 
   const navigateToAuth = () => {
     navigate('/auth');
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+  const getInitials = (email: string) => {
+    // If no email, return placeholder
+    if (!email) return "U";
+    
+    // Get first part of email before @ symbol
+    const username = email.split('@')[0];
+    
+    // If username has dots, treat them as separators
+    if (username.includes('.')) {
+      return username
+        .split('.')
+        .map(part => part[0])
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
+    }
+    
+    // Otherwise, take first 2 characters of username
+    return username.substring(0, 2).toUpperCase();
   };
 
   return (
@@ -115,26 +108,22 @@ const Navbar = () => {
               )}
             </Button>
             
-            {userData?.isLoggedIn ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-9 w-9 transition-all duration-300 hover:ring-2 hover:ring-theme-accent-300 hover:scale-110">
-                      {userData.avatar ? (
-                        <AvatarImage src={userData.avatar} alt={userData.name} />
-                      ) : (
-                        <AvatarFallback className="bg-theme-accent-400 text-white">
-                          {getInitials(userData.name)}
-                        </AvatarFallback>
-                      )}
+                      <AvatarFallback className="bg-theme-accent-400 text-white">
+                        {getInitials(user.email || "")}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 glass-card border-white/10" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none text-white">{userData.name}</p>
-                      <p className="text-xs leading-none text-white/70">{userData.email}</p>
+                      <p className="text-sm font-medium leading-none text-white">{user.email}</p>
+                      <p className="text-xs leading-none text-white/70">Signed in account</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-white/10" />
@@ -147,7 +136,7 @@ const Navbar = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     className="cursor-pointer hover:bg-white/10 transition-all duration-300"
-                    onClick={() => navigate('/tracker')}
+                    onClick={() => navigate('/my-donations')}
                   >
                     <Gift className="mr-2 h-4 w-4" />
                     <span>My Donations</span>
@@ -235,21 +224,17 @@ const Navbar = () => {
               {isConnected ? "Connected" : "Connect Wallet"}
             </Button>
             
-            {userData?.isLoggedIn ? (
+            {user ? (
               <div className="mt-2 p-3 bg-white/5 rounded-md">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10">
-                    {userData.avatar ? (
-                      <AvatarImage src={userData.avatar} alt={userData.name} />
-                    ) : (
-                      <AvatarFallback className="bg-theme-accent-400 text-white">
-                        {getInitials(userData.name)}
-                      </AvatarFallback>
-                    )}
+                    <AvatarFallback className="bg-theme-accent-400 text-white">
+                      {getInitials(user.email || "")}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium text-white">{userData.name}</p>
-                    <p className="text-xs text-white/70">{userData.email}</p>
+                    <p className="text-sm font-medium text-white">{user.email}</p>
+                    <p className="text-xs text-white/70">Signed in account</p>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -300,6 +285,7 @@ const Navbar = () => {
                   setIsMenuOpen(false);
                 }}
               >
+                <LogIn className="mr-2 h-4 w-4" />
                 Sign Up / Login
               </Button>
             )}
