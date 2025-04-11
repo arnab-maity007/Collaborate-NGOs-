@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { LogIn, UserPlus, Loader2 } from "lucide-react";
@@ -15,6 +17,9 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [profession, setProfession] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const { user, signIn, signUp } = useAuth();
@@ -56,7 +61,7 @@ const AuthPage = () => {
     e.preventDefault();
     setError("");
     
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !name || !age || !profession) {
       setError("Please fill in all fields");
       return;
     }
@@ -72,7 +77,13 @@ const AuthPage = () => {
     }
     
     setIsSubmitting(true);
-    const { success, error } = await signUp(email, password);
+    const { success, error } = await signUp(email, password, {
+      data: {
+        name,
+        age,
+        profession
+      }
+    });
     setIsSubmitting(false);
     
     if (!success && error) {
@@ -157,6 +168,44 @@ const AuthPage = () => {
               
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input 
+                      id="name" 
+                      type="text" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="age">Age</Label>
+                    <Input 
+                      id="age" 
+                      type="number" 
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      placeholder="Enter your age"
+                      required
+                      min="1"
+                      max="120"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="profession">Profession</Label>
+                    <Input 
+                      id="profession" 
+                      type="text" 
+                      value={profession}
+                      onChange={(e) => setProfession(e.target.value)}
+                      placeholder="Enter your profession"
+                      required
+                    />
+                  </div>
+                  
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input 

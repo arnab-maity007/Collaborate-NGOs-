@@ -468,9 +468,11 @@ const DonatePage = () => {
               <SelectTrigger className="bg-theme-blue-800 border-gray-700">
                 <SelectValue placeholder="Select an NGO" />
               </SelectTrigger>
-              <SelectContent className="bg-theme-blue-800 border-gray-700">
+              <SelectContent className="bg-theme-blue-700 border-gray-700">
                 {ngos.map(ngo => (
-                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-700">{ngo.name}</SelectItem>
+                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-600">
+                    {ngo.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -486,9 +488,11 @@ const DonatePage = () => {
               <SelectTrigger className="bg-theme-blue-800 border-gray-700">
                 <SelectValue placeholder="Select an NGO" />
               </SelectTrigger>
-              <SelectContent className="bg-theme-blue-800 border-gray-700">
+              <SelectContent className="bg-theme-blue-700 border-gray-700">
                 {ngos.map(ngo => (
-                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-700">{ngo.name}</SelectItem>
+                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-600">
+                    {ngo.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -523,7 +527,7 @@ const DonatePage = () => {
         </div>
       )}
       
-      <div className="p-4 glass-card space-y-2">
+      <div className="p-4 bg-theme-accent-400/20 rounded-md border border-theme-accent-300 space-y-2">
         <h4 className="text-theme-accent-300 font-semibold">Donation Summary</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <p className="text-gray-300">Name: <span className="text-white">{name}</span></p>

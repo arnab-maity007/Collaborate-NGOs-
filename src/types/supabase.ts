@@ -27,3 +27,9 @@ export interface NGO {
   impact_reports: number | null;
   is_verified: boolean | null;
 }
+
+export interface UserMetadata {
+  name?: string;
+  age?: string;
+  profession?: string;
+}
