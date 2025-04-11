@@ -1,41 +1,49 @@
-
-import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, ExternalLink, Clock, Check, Calendar } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getDonationByTransactionId } from "@/services/donationService";
 import { Donation } from "@/types/supabase";
+import { formatDistanceToNow } from "date-fns";
+import { PackageCheck, InfoIcon, Send, Search, Loader2 } from "lucide-react";
 
 const DonationTracker = () => {
-  const [searchParams] = useSearchParams();
-  const initialTxId = searchParams.get("txid") || "";
-  
-  const [transactionId, setTransactionId] = useState(initialTxId);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { toast } = useToast();
+  const [transactionId, setTransactionId] = useState(searchParams.get("txid") || "");
   const [searchResults, setSearchResults] = useState<Donation[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
 
   useEffect(() => {
+    const initialTxId = searchParams.get("txid");
     if (initialTxId) {
-      handleSearch();
+      setTransactionId(initialTxId);
+      handleTrackDonation(initialTxId);
+    } else {
+      setInitialFetchDone(true);
     }
-  }, [initialTxId]);
+  }, []);
 
-  const handleSearch = async () => {
-    if (!transactionId.trim()) return;
-    
+  const handleTrackDonation = async (txId: string = transactionId) => {
+    if (!txId) {
+      toast({
+        title: "Missing transaction ID",
+        description: "Please enter a transaction ID to track your donation",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSearching(true);
-    
+    const initialTxId = searchParams.get("txid");
+
     try {
-      const donation = await getDonationByTransactionId(transactionId);
+      const donation = await getDonationByTransactionId(txId);
       
       if (donation) {
-        // Ensure the status is one of the allowed values
         const typedDonation = {
           ...donation,
           status: donation.status as "pending" | "processing" | "completed"
@@ -43,216 +51,194 @@ const DonationTracker = () => {
         
         setSearchResults([typedDonation]);
         
-        // Update URL with transaction ID for easy sharing
-        if (initialTxId !== transactionId) {
-          navigate(`/tracker?txid=${transactionId}`);
+        if (initialTxId !== txId) {
+          setSearchParams({ txid: txId });
         }
       } else {
         setSearchResults([]);
         toast({
-          title: "No donation found",
-          description: "No donation with this transaction ID was found. Please check and try again.",
+          title: "Donation not found",
+          description: "We couldn't find a donation with that transaction ID",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error("Error searching for donation:", error);
+      console.error("Error tracking donation:", error);
       toast({
-        title: "Error occurred",
-        description: "There was a problem tracking your donation. Please try again later.",
+        title: "Error tracking donation",
+        description: "There was an error tracking your donation",
         variant: "destructive",
       });
-      setSearchResults([]);
     } finally {
       setIsSearching(false);
+      setInitialFetchDone(true);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTransactionId(e.target.value);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "text-green-500";
+      case "processing":
+        return "text-yellow-500";
+      default:
+        return "text-blue-500";
     }
   };
 
   const getStatusIcon = (status: string) => {
-    switch(status) {
-      case "pending":
-        return <Clock className="h-5 w-5 text-yellow-500" />;
-      case "processing":
-        return <Clock className="h-5 w-5 text-blue-500" />;
+    switch (status) {
       case "completed":
-        return <Check className="h-5 w-5 text-green-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch(status) {
-      case "pending":
-        return "Pending";
+        return <PackageCheck className="h-5 w-5 text-green-500" />;
       case "processing":
-        return "Processing";
-      case "completed":
-        return "Completed";
+        return <Send className="h-5 w-5 text-yellow-500" />;
       default:
-        return "";
+        return <InfoIcon className="h-5 w-5 text-blue-500" />;
     }
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-theme-blue-700">
-      <div className="max-w-4xl mx-auto">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-theme-blue-900">
+      <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-gradient">Track Your Donation</h2>
-          <p className="text-gray-300 mb-8">
-            Enter your transaction ID to see how your donation is being used and the impact it's making.
+          <p className="text-gray-300">
+            Enter your transaction ID to track the status of your donation and see the impact it's making.
           </p>
-          
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 max-w-xl mx-auto mb-8">
-            <Input
-              value={transactionId}
-              onChange={(e) => setTransactionId(e.target.value)}
-              placeholder="Enter transaction ID"
-              className="flex-grow"
-            />
-            <Button 
-              onClick={handleSearch} 
-              disabled={isSearching || !transactionId.trim()}
-              className="bg-theme-accent-400 hover:bg-theme-accent-500"
-            >
-              {isSearching ? (
-                <div className="flex items-center">
-                  <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                  Searching...
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <Search className="mr-2 h-4 w-4" />
-                  Track Donation
-                </div>
-              )}
-            </Button>
-          </div>
         </div>
         
-        {searchResults.length > 0 ? (
-          <div className="space-y-6">
-            {searchResults.map((donation) => (
-              <Card key={donation.id} className="glass-card p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold text-gradient-blue">
-                      {donation.category} Donation
-                      {donation.subcategory ? ` (${donation.subcategory})` : ''}
-                    </h3>
-                    <div className="flex items-center space-x-2 text-sm">
-                      {getStatusIcon(donation.status)}
-                      <span className="text-gray-300">{getStatusText(donation.status)}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-400">Transaction ID</p>
-                      <div className="flex items-center">
-                        <p className="text-white text-sm truncate">{donation.transaction_id}</p>
-                        <Button variant="ghost" size="sm" className="ml-2 h-6 w-6 p-0">
-                          <ExternalLink className="h-3 w-3" />
-                          <span className="sr-only">View on Explorer</span>
-                        </Button>
+        <Card className="glass-card p-6 md:p-8">
+          <div className="mb-6">
+            <div className="relative">
+              <Input
+                type="text"
+                value={transactionId}
+                onChange={handleInputChange}
+                placeholder="Enter transaction ID"
+                className="pr-24"
+              />
+              <Button 
+                className="absolute right-1 top-1 bottom-1 bg-theme-accent-400 hover:bg-theme-accent-500"
+                onClick={() => handleTrackDonation()}
+                disabled={isSearching}
+              >
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" />
+                    Track
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+          
+          {initialFetchDone && (
+            <div>
+              {searchResults.length > 0 ? (
+                <div className="space-y-6">
+                  {searchResults.map((donation) => (
+                    <div key={donation.id} className="space-y-4">
+                      <div className="flex items-center space-x-2">
+                        {getStatusIcon(donation.status)}
+                        <h3 className="text-xl font-semibold">
+                          Donation Status: <span className={getStatusColor(donation.status)}>
+                            {donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
+                          </span>
+                        </h3>
                       </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-sm text-gray-400">Date</p>
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                        <p className="text-white">{new Date(donation.created_at).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-sm text-gray-400">Amount</p>
-                      <p className="text-white">
-                        {donation.amount ? `₹${donation.amount}` : 'Non-monetary donation'}
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <p className="text-sm text-gray-400">Donation Type</p>
-                      <p className="text-white capitalize">{donation.donation_type}</p>
-                    </div>
-                  </div>
-                  
-                  <Tabs defaultValue="details">
-                    <TabsList className="grid w-full grid-cols-2 bg-theme-blue-800">
-                      <TabsTrigger value="details">Donation Details</TabsTrigger>
-                      <TabsTrigger value="usage">Usage & Impact</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="details" className="p-4 mt-2 neo-blur">
-                      <div className="space-y-2">
-                        <p className="text-sm text-gray-400">Donation Mode</p>
-                        <p className="text-sm text-white capitalize">{donation.donation_mode || "Online"}</p>
-                        
-                        {donation.delivery_address && (
-                          <>
-                            <p className="text-sm text-gray-400 mt-3">Delivery Address</p>
-                            <p className="text-sm text-white">{donation.delivery_address}</p>
-                          </>
-                        )}
-                        
-                        {donation.other_details && (
-                          <>
-                            <p className="text-sm text-gray-400 mt-3">Additional Details</p>
-                            <p className="text-sm text-white">{donation.other_details}</p>
-                          </>
-                        )}
-                        
-                        <div className="pt-2">
-                          <p className="text-sm text-gray-400">Verification</p>
-                          <div className="flex items-center mt-1">
-                            <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
-                            <p className="text-sm text-green-400">Verified on Blockchain</p>
-                          </div>
-                        </div>
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="usage" className="p-4 mt-2 neo-blur">
-                      {donation.status === "completed" && donation.impact_report ? (
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-300">{donation.impact_report}</p>
-                          <div className="mt-4 text-sm text-theme-accent-300">
-                            Impact report has been verified and published to the blockchain
-                          </div>
+                          <p className="text-gray-400 text-sm">Transaction ID</p>
+                          <p className="text-white">{donation.transaction_id}</p>
                         </div>
-                      ) : (
-                        <div className="text-sm text-gray-300">
-                          {donation.status === "pending" 
-                            ? "Donation is pending confirmation on the blockchain."
-                            : "Donation is being processed. Usage details will be available once completed."}
+                        <div>
+                          <p className="text-gray-400 text-sm">Date</p>
+                          <p className="text-white">
+                            {new Date(donation.created_at).toLocaleDateString()} 
+                            <span className="text-gray-400 text-xs ml-2">
+                              ({formatDistanceToNow(new Date(donation.created_at), { addSuffix: true })})
+                            </span>
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Type</p>
+                          <p className="text-white">{donation.donation_type}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Category</p>
+                          <p className="text-white">
+                            {donation.category}
+                            {donation.subcategory && ` (${donation.subcategory})`}
+                          </p>
+                        </div>
+                        {donation.amount && (
+                          <div>
+                            <p className="text-gray-400 text-sm">Amount</p>
+                            <p className="text-white">₹{donation.amount}</p>
+                          </div>
+                        )}
+                        {donation.ngos && (
+                          <div>
+                            <p className="text-gray-400 text-sm">Organization</p>
+                            <p className="text-white">{donation.ngos.name}</p>
+                          </div>
+                        )}
+                        {donation.donation_mode && (
+                          <div>
+                            <p className="text-gray-400 text-sm">Donation Mode</p>
+                            <p className="text-white">{donation.donation_mode}</p>
+                          </div>
+                        )}
+                        {donation.delivery_address && (
+                          <div className="md:col-span-2">
+                            <p className="text-gray-400 text-sm">Delivery Address</p>
+                            <p className="text-white">{donation.delivery_address}</p>
+                          </div>
+                        )}
+                        {donation.other_details && (
+                          <div className="md:col-span-2">
+                            <p className="text-gray-400 text-sm">Additional Details</p>
+                            <p className="text-white">{donation.other_details}</p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {donation.status === "completed" && donation.impact_report && (
+                        <div className="mt-6 p-4 bg-theme-blue-800 rounded-lg">
+                          <h4 className="text-theme-accent-300 font-semibold mb-2">Impact Report</h4>
+                          <p className="text-white">{donation.impact_report}</p>
                         </div>
                       )}
-                    </TabsContent>
-                  </Tabs>
+                      
+                      {donation.status === "pending" && (
+                        <div className="mt-6 p-4 glass-card">
+                          <h4 className="text-theme-accent-300 font-semibold mb-2">What Happens Next?</h4>
+                          <p className="text-gray-300">
+                            Your donation is being processed. You'll receive updates as it moves through our system
+                            and makes its way to the intended recipients. Thank you for your generosity!
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              </Card>
-            ))}
-          </div>
-        ) : transactionId && !isSearching ? (
-          <Card className="glass-card p-6 text-center">
-            <p className="text-gray-300">No donations found with this transaction ID. Please check and try again.</p>
-          </Card>
-        ) : null}
-        
-        <div className="mt-12 glass-card p-6">
-          <h3 className="text-xl font-semibold mb-4 text-gradient">How Donation Tracking Works</h3>
-          <div className="space-y-4">
-            <p className="text-gray-300">
-              Our blockchain-powered donation tracking system provides complete transparency from the moment you donate until your contribution makes an impact:
-            </p>
-            <ol className="list-decimal list-inside space-y-2 text-gray-300">
-              <li>Your donation is recorded on the blockchain with a unique transaction ID</li>
-              <li>The funds are transferred directly to the verified NGO</li>
-              <li>The NGO records how the funds are used on the blockchain</li>
-              <li>You can track your donation anytime using your transaction ID</li>
-            </ol>
-          </div>
-        </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-gray-400">
+                    Enter a transaction ID to track your donation
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
       </div>
     </section>
   );

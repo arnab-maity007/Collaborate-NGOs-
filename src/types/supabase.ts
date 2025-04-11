@@ -14,6 +14,7 @@ export interface Donation {
   other_details: string | null;
   delivery_address: string | null;
   impact_report: string | null;
+  ngos?: NGO | null;
 }
 
 export interface NGO {

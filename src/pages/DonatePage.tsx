@@ -33,7 +33,6 @@ const DonatePage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  // Personal information
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -43,11 +42,9 @@ const DonatePage = () => {
   const [pincode, setPincode] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   
-  // NGOs
   const [ngos, setNgos] = useState<NGO[]>([]);
   const [selectedNgo, setSelectedNgo] = useState<string | null>(null);
   
-  // Donation information
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState<DonationCategory | null>(null);
   const [animalSubcategory, setAnimalSubcategory] = useState<AnimalSubcategory | null>(null);
@@ -58,17 +55,14 @@ const DonatePage = () => {
   const [processingDonation, setProcessingDonation] = useState(false);
 
   useEffect(() => {
-    // Pre-fill email if user is logged in
     if (user) {
       setEmail(user.email || "");
     }
     
-    // Fetch NGOs
     const fetchNGOs = async () => {
       const ngoData = await getNGOs();
       setNgos(ngoData);
       
-      // Set first NGO as default if available
       if (ngoData.length > 0) {
         setSelectedNgo(ngoData[0].id);
       }
@@ -106,7 +100,6 @@ const DonatePage = () => {
   };
 
   const handleSubmitDonation = async () => {
-    // Check if user is logged in
     if (!user) {
       toast({
         title: "Login required",
@@ -146,7 +139,6 @@ const DonatePage = () => {
 
     setProcessingDonation(true);
 
-    // Prepare donation data
     const donationData = {
       category: category,
       subcategory: category === "animals" ? animalSubcategory : null,
@@ -158,7 +150,6 @@ const DonatePage = () => {
       ngo_id: selectedNgo
     };
 
-    // Submit to Supabase
     const { success, donation, error } = await submitDonation(donationData);
     
     setProcessingDonation(false);
@@ -169,7 +160,6 @@ const DonatePage = () => {
         description: "Your donation has been recorded. Thank you for your generosity!",
       });
       
-      // Redirect to tracker page with the transaction ID
       navigate(`/tracker?txid=${donation.transaction_id}`);
     } else {
       toast({
@@ -475,12 +465,12 @@ const DonatePage = () => {
           <div className="space-y-2">
             <Label htmlFor="ngo">Select NGO to donate to</Label>
             <Select value={selectedNgo || ""} onValueChange={setSelectedNgo}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-theme-blue-800 border-gray-700">
                 <SelectValue placeholder="Select an NGO" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-theme-blue-800 border-gray-700">
                 {ngos.map(ngo => (
-                  <SelectItem key={ngo.id} value={ngo.id}>{ngo.name}</SelectItem>
+                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-700">{ngo.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -493,12 +483,12 @@ const DonatePage = () => {
           <div className="space-y-2">
             <Label htmlFor="ngo">Select NGO to donate to</Label>
             <Select value={selectedNgo || ""} onValueChange={setSelectedNgo}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-theme-blue-800 border-gray-700">
                 <SelectValue placeholder="Select an NGO" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-theme-blue-800 border-gray-700">
                 {ngos.map(ngo => (
-                  <SelectItem key={ngo.id} value={ngo.id}>{ngo.name}</SelectItem>
+                  <SelectItem key={ngo.id} value={ngo.id} className="text-white hover:bg-theme-blue-700">{ngo.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

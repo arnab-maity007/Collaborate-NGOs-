@@ -86,7 +86,54 @@ export const getNGOs = async () => {
       .order('name');
 
     if (error) throw error;
-    return data || [];
+    
+    // If there are no NGOs, let's create some sample NGOs
+    if (!data || data.length === 0) {
+      const sampleNGOs = [
+        {
+          name: "Save the Children",
+          wallet_address: "0x123456789abcdef",
+          category: "children",
+          description: "Helping children in need",
+          is_verified: true
+        },
+        {
+          name: "Animal Rescue",
+          wallet_address: "0xabcdef123456789",
+          category: "animals",
+          description: "Protecting endangered animals",
+          is_verified: true
+        },
+        {
+          name: "Brave Soldiers Fund",
+          wallet_address: "0x987654321abcdef",
+          category: "army",
+          description: "Supporting veterans and their families",
+          is_verified: true
+        },
+        {
+          name: "Science Research Institute",
+          wallet_address: "0xfedcba987654321",
+          category: "research",
+          description: "Advancing scientific research",
+          is_verified: true
+        }
+      ];
+      
+      for (const ngo of sampleNGOs) {
+        await upsertNGO(ngo);
+      }
+      
+      // Fetch the NGOs again
+      const { data: refreshedData } = await supabase
+        .from('ngos')
+        .select('*')
+        .order('name');
+        
+      return refreshedData || [];
+    }
+    
+    return data;
   } catch (error) {
     console.error('Error fetching NGOs:', error);
     return [];

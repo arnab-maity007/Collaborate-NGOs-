@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -9,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 import { LogIn, UserPlus, Loader2 } from "lucide-react";
 
 const AuthPage = () => {
@@ -18,6 +18,7 @@ const AuthPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const { user, signIn, signUp } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -42,6 +43,12 @@ const AuthPage = () => {
     
     if (!success && error) {
       setError(error.message || "Failed to sign in");
+    } else if (success) {
+      toast({
+        title: "Sign in successful",
+        description: "You are now logged in."
+      });
+      navigate("/");
     }
   };
 
@@ -70,9 +77,12 @@ const AuthPage = () => {
     
     if (!success && error) {
       setError(error.message || "Failed to sign up");
-    } else {
-      // If signup was successful, show a message and redirect
-      navigate("/");
+    } else if (success) {
+      toast({
+        title: "Sign up successful",
+        description: "Please check your email for verification instructions."
+      });
+      // Let's keep the user on the auth page after signup so they can log in
     }
   };
 
