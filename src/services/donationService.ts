@@ -34,12 +34,20 @@ export const submitDonation = async (donationData: {
     // Generate a unique transaction ID for this donation
     const transaction_id = `tx_${uuidv4().replace(/-/g, '')}`;
     
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    
     const { data, error } = await supabase
       .from('donations')
       .insert({
         ...donationData,
         transaction_id,
-        status: 'pending'
+        status: 'pending',
+        user_id: user.id
       })
       .select()
       .single();
@@ -86,7 +94,15 @@ export const getNGOs = async () => {
 };
 
 // Create or update NGO (for admin use)
-export const upsertNGO = async (ngo: Partial<NGO>) => {
+export const upsertNGO = async (ngo: {
+  id?: string;
+  name: string;
+  wallet_address: string;
+  category?: string;
+  description?: string;
+  impact_reports?: number;
+  is_verified?: boolean;
+}) => {
   try {
     const { data, error } = await supabase
       .from('ngos')

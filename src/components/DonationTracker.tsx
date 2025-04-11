@@ -35,7 +35,13 @@ const DonationTracker = () => {
       const donation = await getDonationByTransactionId(transactionId);
       
       if (donation) {
-        setSearchResults([donation]);
+        // Ensure the status is one of the allowed values
+        const typedDonation = {
+          ...donation,
+          status: donation.status as "pending" | "processing" | "completed"
+        };
+        
+        setSearchResults([typedDonation]);
         
         // Update URL with transaction ID for easy sharing
         if (initialTxId !== transactionId) {
